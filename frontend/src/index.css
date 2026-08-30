@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Ensure the body takes up the full screen properly /
+body {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+background-color: #f8fafc; / slate-50 
+}
+*/
