@@ -102,39 +102,47 @@ const GovernmentDashboard = () => {
       let hasValidCoords = false;
 
       challenges.forEach(report => {
-        let lat, lng;
+        let lat = null;
+        let lng = null;
         
-        // Check if location is exact GPS (contains comma)
-        if (report.location && report.location.includes(',')) {
-          const parts = report.location.split(',');
-          lat = parseFloat(parts[0]);
-          lng = parseFloat(parts[1]);
-        } else if (report.location) {
-          // Fallback to text-hash coordinates
-          const coords = getCoordinates(report.location);
-          lat = coords[0];
-          lng = coords[1];
+        if (report.location) {
+          // Strictly check if it's an exact GPS coordinate (e.g. "23.344, 85.309")
+          const gpsRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+          if (gpsRegex.test(report.location)) {
+            const parts = report.location.split(',');
+            lat = parseFloat(parts[0]);
+            lng = parseFloat(parts[1]);
+          } else {
+            // Fallback for addresses containing text/commas (e.g. "Kurud, Dhamtari")
+            const coords = getCoordinates(report.location);
+            lat = coords[0];
+            lng = coords[1];
+          }
         }
 
-        if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        if (lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng)) {
           hasValidCoords = true;
           bounds.extend([lat, lng]);
 
-          let color = 'blue';
+          let colorClass = 'text-blue-600';
+          let badgeClass = 'bg-blue-100 text-blue-700';
           let pulseClass = '';
 
           if (report.priority === 'Critical') {
-            color = 'red';
+            colorClass = 'text-red-600';
+            badgeClass = 'bg-red-100 text-red-700';
             pulseClass = 'animate-bounce';
           } else if (report.priority === 'High') {
-            color = 'orange';
+            colorClass = 'text-orange-600';
+            badgeClass = 'bg-orange-100 text-orange-700';
           } else if (report.status === 'resolved') {
-            color = 'teal';
+            colorClass = 'text-teal-600';
+            badgeClass = 'bg-teal-100 text-teal-700';
           }
 
           const customIcon = window.L.divIcon({
             className: 'bg-transparent',
-            html: `<div class="text-${color}-600 drop-shadow-xl -mt-8 -ml-4 ${pulseClass} cursor-pointer transition-transform hover:scale-125">
+            html: `<div class="${colorClass} drop-shadow-xl -mt-8 -ml-4 ${pulseClass} cursor-pointer transition-transform hover:scale-125">
                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                       <circle cx="12" cy="10" r="3" fill="white"></circle>
@@ -151,7 +159,7 @@ const GovernmentDashboard = () => {
               <div class="text-xs font-bold text-slate-500 uppercase mb-1 tracking-wider">Report #${report.id}</div>
               <div class="font-bold text-slate-900 text-sm mb-2 leading-tight">${report.title}</div>
               <div class="flex gap-2 mb-3">
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded uppercase ${color === 'red' ? 'bg-red-100 text-red-700' : color === 'orange' ? 'bg-orange-100 text-orange-700' : color === 'teal' ? 'bg-teal-100 text-teal-700' : 'bg-blue-100 text-blue-700'}">${report.priority}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded uppercase ${badgeClass}">${report.priority}</span>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded uppercase bg-slate-100 text-slate-700">${report.status_display || report.status}</span>
               </div>
               <p class="text-xs text-slate-600 line-clamp-2 mb-2">${report.description}</p>
