@@ -4,7 +4,8 @@ import axios from 'axios';
 import { 
   LogOut, MapPin, BookOpen, Lightbulb, Bell, Search, 
   GraduationCap, X, FileText, CheckCircle, Upload, Microscope,
-  User, Edit, Save, Zap, Users, Shield, Menu
+  User, Edit, Save, Zap, Users, Shield, Menu, Clock, DollarSign,
+  FileUp, Paperclip, Trash2, AlertTriangle
 } from 'lucide-react';
 
 const UniversityDashboard = () => {
@@ -19,8 +20,15 @@ const UniversityDashboard = () => {
   const [proposalText, setProposalText] = useState('');
   const [facultyLead, setFacultyLead] = useState('');
   const [teamSize, setTeamSize] = useState('');
+  const [proposalFile, setProposalFile] = useState(null);
+  
+  const [deploymentNotes, setDeploymentNotes] = useState('');
+  const [resolutionEvidence, setResolutionEvidence] = useState(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // NEW: Mobile sidebar toggle
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); 
+  const [isEditingProposal, setIsEditingProposal] = useState(false); 
+  const [proposalToWithdraw, setProposalToWithdraw] = useState(null);
   
   const [userProfile, setUserProfile] = useState({
     organization_name: '', first_name: '', last_name: '', email: '', 
@@ -84,22 +92,33 @@ const UniversityDashboard = () => {
     try {
       const token = localStorage.getItem('access_token');
       const formattedProposal = `FACULTY LEAD: ${facultyLead}\nSTUDENT TEAM SIZE: ${teamSize}\n\nPROPOSAL:\n${proposalText}`;
+      const actionLogEntry = `\n[${new Date().toLocaleDateString()}] UNIVERSITY PROPOSAL ${isEditingProposal ? 'UPDATED' : 'SUBMITTED'}: ${userProfile.organization_name} ${isEditingProposal ? 'updated their' : 'submitted an'} R&D proposal. Awaiting Industry CSR funding.`;
+
+      const formData = new FormData();
+      formData.append('status', 'proposal_submitted');
+      formData.append('proposal_details', formattedProposal);
+      formData.append('assigned_university', userProfile.id);
+      formData.append('action_logs', (selectedReport.action_logs || '') + actionLogEntry);
       
+      if (proposalFile) {
+        formData.append('proposal_document', proposalFile);
+      }
+
       const response = await axios.patch(
         `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        formData,
         { 
-            status: 'proposal_submitted',
-            proposal_details: formattedProposal,
-            assigned_university: userProfile.id 
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data' 
+          } 
+        }
       );
       
       setChallenges(challenges.map(c => c.id === selectedReport.id ? response.data : c));
-      setSelectedReport(null); 
-      setProposalText('');
-      setFacultyLead('');
-      setTeamSize('');
+      setSelectedReport(response.data); 
+      setIsEditingProposal(false);
+      setProposalFile(null); 
     } catch (error) {
       console.error("Error submitting proposal:", error);
       alert("Failed to submit proposal.");
@@ -108,7 +127,94 @@ const UniversityDashboard = () => {
     }
   };
 
-  // SMART MATCH LOGIC: Filters challenges based on University's expertise
+  const handleEditProposalClick = () => {
+    const details = selectedReport.proposal_details || '';
+    
+    // SMART REGEX: Handles any type of line breaks
+    const leadMatch = details.match(/FACULTY LEAD:\s*([^\n]+)/);
+    const sizeMatch = details.match(/STUDENT TEAM SIZE:\s*([^\n]+)/);
+    const propMatch = details.match(/PROPOSAL:\s*([\s\S]+)/); 
+
+    setFacultyLead(leadMatch ? leadMatch[1].trim() : '');
+    setTeamSize(sizeMatch ? sizeMatch[1].trim() : '');
+    setProposalText(propMatch ? propMatch[1].trim() : '');
+    
+    setProposalFile(null); 
+    setIsEditingProposal(true);
+  };
+
+  const executeWithdraw = async () => {
+    if (!proposalToWithdraw) return;
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const actionLogEntry = `\n[${new Date().toLocaleDateString()}] PROPOSAL WITHDRAWN: ${userProfile.organization_name} withdrew their R&D proposal. The challenge is open again.`;
+
+      const formData = new FormData();
+      formData.append('status', 'forwarded_to_univ');
+      formData.append('proposal_details', '');
+      formData.append('action_logs', (proposalToWithdraw.action_logs || '') + actionLogEntry);
+
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/challenges/reports/${proposalToWithdraw.id}/`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setChallenges(challenges.map(c => c.id === proposalToWithdraw.id ? response.data : c));
+      setSelectedReport(null);
+      setIsEditingProposal(false);
+      setProposalToWithdraw(null); 
+    } catch (error) {
+      console.error("Error withdrawing:", error);
+      alert("Failed to withdraw proposal.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleMarkResolved = async () => {
+    if (!deploymentNotes.trim()) {
+      return alert("Please provide deployment notes or a summary before resolving.");
+    }
+    
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const actionLogEntry = `\n[${new Date().toLocaleDateString()}] PROJECT DEPLOYED: ${userProfile.organization_name} has successfully implemented the solution. Notes: ${deploymentNotes}`;
+
+      const formData = new FormData();
+      formData.append('status', 'resolved');
+      formData.append('action_logs', (selectedReport.action_logs || '') + actionLogEntry);
+      formData.append('deployment_notes', deploymentNotes); 
+      
+      if (resolutionEvidence) {
+        formData.append('resolution_evidence', resolutionEvidence); 
+      }
+
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        formData,
+        { 
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data' 
+          } 
+        }
+      );
+      
+      setChallenges(challenges.map(c => c.id === selectedReport.id ? response.data : c));
+      setSelectedReport(null); 
+      setDeploymentNotes('');
+      setResolutionEvidence(null);
+    } catch (error) {
+      console.error("Error resolving project:", error);
+      alert("Failed to mark as resolved.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const getFilteredChallenges = () => {
     let list = challenges.filter(c => c.status === 'forwarded_to_univ');
     
@@ -204,10 +310,9 @@ const UniversityDashboard = () => {
         {/* Scrollable Workspace */}
         <div className="p-4 md:p-8 flex-1 overflow-auto bg-slate-50/50">
           
-          {}
           {(activeTab === 'open' || activeTab === 'my_projects') && (
             <>
-              {/* NEW: Smart Onboarding Banner for missing skills */}
+              {/* Smart Onboarding Banner for missing skills */}
               {activeTab === 'open' && !userProfile?.expertise_domain && !isLoading && (
                 <div className="mb-6 p-5 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 border border-slate-700 animate-in fade-in slide-in-from-top-2">
                   <div className="flex items-start gap-4">
@@ -284,7 +389,9 @@ const UniversityDashboard = () => {
                           }`}>
                             {report.priority} Priority
                           </span>
-                          <span className="text-xs text-slate-400 font-medium">{report.date_formatted}</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded uppercase bg-slate-100 text-slate-600">
+                            {report.status_display}
+                          </span>
                         </div>
                         <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2">{report.title}</h3>
                         <p className="text-sm text-slate-600 line-clamp-3 mb-4">{report.description}</p>
@@ -307,7 +414,6 @@ const UniversityDashboard = () => {
             </>
           )}
 
-          {}
           {activeTab === 'profile' && (
             <div className="max-w-4xl mx-auto">
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -331,7 +437,6 @@ const UniversityDashboard = () => {
                   )}
 
                   <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Basic Info */}
                     <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Institution Name</label>
@@ -349,7 +454,6 @@ const UniversityDashboard = () => {
                       </h3>
                     </div>
 
-                    {/* Smart Match Fields */}
                     <div className="md:col-span-2 space-y-5">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Domain Expertise (Keywords)</label>
@@ -379,10 +483,10 @@ const UniversityDashboard = () => {
         </div>
       </main>
 
-      {}
+      {/* R&D PROPOSAL MODAL */}
       {selectedReport && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh]">
             
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-start bg-slate-900 text-white shrink-0">
               <div>
@@ -392,7 +496,7 @@ const UniversityDashboard = () => {
                 </div>
                 <p className="text-sm text-slate-400">Govt Routed ID: SANKALP-{selectedReport.id.toString().padStart(4, '0')}</p>
               </div>
-              <button onClick={() => {setSelectedReport(null); setProposalText('');}} className="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full transition-colors">
+              <button onClick={() => {setSelectedReport(null); setProposalText(''); setProposalFile(null); setResolutionEvidence(null); setDeploymentNotes(''); setIsEditingProposal(false);}} className="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -422,12 +526,17 @@ const UniversityDashboard = () => {
 
               {/* Right Side: Academic Action Area */}
               <div className="p-6 flex flex-col bg-slate-50">
-                {selectedReport.status === 'forwarded_to_univ' ? (
+                {selectedReport.status === 'forwarded_to_univ' || isEditingProposal ? (
                   // STATE 1: Open Challenge, Needs a proposal
                   <div className="flex-1 flex flex-col">
-                    <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-amber-600" /> Submit R&D Proposal
-                    </h4>
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-amber-600" /> {isEditingProposal ? 'Edit R&D Proposal' : 'Submit R&D Proposal'}
+                      </h4>
+                      {isEditingProposal && (
+                        <button onClick={() => setIsEditingProposal(false)} className="text-xs text-slate-500 hover:text-slate-800 font-bold bg-slate-200 px-2 py-1 rounded">Cancel Edit</button>
+                      )}
+                    </div>
                     
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       <div>
@@ -445,30 +554,143 @@ const UniversityDashboard = () => {
                       value={proposalText}
                       onChange={(e) => setProposalText(e.target.value)}
                       placeholder="Describe your tech stack, required lab equipment, and estimated timeframe..."
-                      className="flex-1 w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none resize-none text-sm bg-white min-h-[150px]"
+                      className="w-full p-3 mb-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none resize-none text-sm bg-white min-h-[120px]"
                     ></textarea>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1">Upload Diagram / Pitch Deck (Optional)</label>
+                      <div className="relative">
+                        <input 
+                          type="file" 
+                          accept="image/*,.pdf,.ppt,.pptx"
+                          onChange={(e) => setProposalFile(e.target.files[0])}
+                          className="hidden" 
+                          id="proposal-upload"
+                        />
+                        <label 
+                          htmlFor="proposal-upload" 
+                          className="flex items-center gap-2 w-full p-3 rounded-xl border border-slate-300 border-dashed bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors text-sm text-slate-600"
+                        >
+                          <Paperclip className="w-4 h-4 text-slate-400" />
+                          {proposalFile ? (
+                            <span className="font-semibold text-amber-700 truncate">{proposalFile.name}</span>
+                          ) : selectedReport.proposal_document && isEditingProposal ? (
+                            <span className="font-semibold text-blue-600 truncate">Existing file saved. Click to replace.</span>
+                          ) : (
+                            <span>{isEditingProposal ? 'Upload a new presentation or photo (Max 10MB)' : 'Click to upload presentation or photos (Max 10MB)'}</span>
+                          )}
+                        </label>
+                      </div>
+                    </div>
                     
                     <button 
                       onClick={handleSubmitProposal}
                       disabled={isSubmitting}
                       className="mt-4 w-full py-3 rounded-xl font-bold text-white bg-amber-600 hover:bg-amber-700 shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
-                      <Upload className="w-5 h-5" /> {isSubmitting ? 'Submitting...' : 'Submit Proposal & Claim'}
+                      <Upload className="w-5 h-5" /> {isSubmitting ? 'Saving...' : (isEditingProposal ? 'Update Proposal' : 'Submit Proposal & Claim')}
                     </button>
                   </div>
-                ) : (
-                  // STATE 2: Already Claimed / Proposal Submitted
+                ) : selectedReport.status === 'proposal_submitted' ? (
+                  // STATE 2: Awaiting Industry CSR
                   <div className="flex-1 flex flex-col">
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6 text-center shadow-sm">
-                      <CheckCircle className="w-10 h-10 text-emerald-600 mx-auto mb-2" />
-                      <h4 className="text-emerald-900 font-bold">Proposal Submitted</h4>
-                      <p className="text-emerald-700 text-sm mt-1">Project is active. Awaiting Industry CSR Review.</p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 text-center shadow-sm">
+                      <Clock className="w-10 h-10 text-blue-600 mx-auto mb-2" />
+                      <h4 className="text-blue-900 font-bold">Awaiting CSR Funding</h4>
+                      <p className="text-blue-700 text-sm mt-1">Proposal submitted successfully. Awaiting industry partner review.</p>
                     </div>
                     
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Your R&D Proposal Details</h4>
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 text-slate-700 text-sm whitespace-pre-wrap leading-relaxed shadow-sm flex-1 overflow-y-auto font-mono">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide">Your R&D Proposal</h4>
+                      <div className="flex gap-2">
+                        <button onClick={handleEditProposalClick} className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded border border-blue-200 flex items-center gap-1 transition-colors"><Edit className="w-3 h-3"/> Edit</button>
+                        <button onClick={() => setProposalToWithdraw(selectedReport)} disabled={isSubmitting} className="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 rounded border border-red-200 flex items-center gap-1 transition-colors"><Trash2 className="w-3 h-3"/> Withdraw</button>
+                      </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-xl border border-slate-200 text-slate-700 text-sm whitespace-pre-wrap leading-relaxed shadow-sm font-mono mb-4">
                       {selectedReport.proposal_details}
                     </div>
+
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Ecosystem Activity Timeline</h4>
+                    <div className="bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono whitespace-pre-wrap flex-1 overflow-y-auto">
+                      {selectedReport.action_logs || "Timeline initialized..."}
+                    </div>
+                  </div>
+                ) : selectedReport.status === 'in_progress' ? (
+                   // STATE 3: Funded & In Progress
+                   <div className="flex-1 flex flex-col">
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6 text-center shadow-sm">
+                      <DollarSign className="w-10 h-10 text-emerald-600 mx-auto mb-2" />
+                      <h4 className="text-emerald-900 font-bold">CSR Funding Approved!</h4>
+                      <p className="text-emerald-700 text-sm mt-1">Industry partner has funded this project. Please proceed with R&D and deployment.</p>
+                    </div>
+                    
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Ecosystem Activity Timeline</h4>
+                    <div className="bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono whitespace-pre-wrap mb-4 h-32 overflow-y-auto">
+                      {selectedReport.action_logs || "Timeline initialized..."}
+                    </div>
+
+                    <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                      <FileUp className="w-5 h-5 text-teal-600" /> Proof of Deployment
+                    </h4>
+                    <p className="text-xs text-slate-500 mb-3">Upload multimedia evidence (Images, PDFs, or PPTs) and final notes to officially close this project.</p>
+                    
+                    <div className="space-y-4 mb-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Final Deployment Notes</label>
+                        <textarea 
+                          value={deploymentNotes}
+                          onChange={(e) => setDeploymentNotes(e.target.value)}
+                          placeholder="Summarize the implementation, impact metrics, and final prototype details..."
+                          className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 outline-none resize-none text-sm bg-white min-h-[100px]"
+                        ></textarea>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Multimedia Evidence (Optional)</label>
+                        <div className="relative">
+                          <input 
+                            type="file" 
+                            accept="image/*,.pdf,.ppt,.pptx"
+                            onChange={(e) => setResolutionEvidence(e.target.files[0])}
+                            className="hidden" 
+                            id="resolution-upload"
+                          />
+                          <label 
+                            htmlFor="resolution-upload" 
+                            className="flex items-center gap-2 w-full p-3 rounded-xl border border-slate-300 border-dashed bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors text-sm text-slate-600"
+                          >
+                            <Paperclip className="w-4 h-4 text-slate-400" />
+                            {resolutionEvidence ? (
+                              <span className="font-semibold text-teal-700 truncate">{resolutionEvidence.name}</span>
+                            ) : (
+                              <span>Click to upload presentation or photos (Max 10MB)</span>
+                            )}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+      
+                    <div className="mt-auto">
+                      <button 
+                        onClick={handleMarkResolved}
+                        disabled={isSubmitting}
+                        className="w-full py-3.5 rounded-xl font-bold text-white bg-teal-600 hover:bg-teal-700 shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        <CheckCircle className="w-5 h-5" /> {isSubmitting ? 'Processing...' : 'Submit Deployment & Mark Resolved'}
+                      </button>
+                    </div>
+                   </div>
+                ) : (
+                  // STATE 4: Resolved
+                  <div className="flex-1 flex flex-col justify-center items-center text-center p-8">
+                    <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mb-4 border border-teal-200 shadow-inner">
+                      <CheckCircle className="w-10 h-10 text-teal-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Project Successfully Deployed</h3>
+                    <p className="text-slate-500 max-w-md">
+                      Congratulations! Your university team has successfully implemented the solution and resolved this societal challenge.
+                    </p>
                   </div>
                 )}
               </div>
@@ -476,6 +698,39 @@ const UniversityDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* WITHDRAW CONFIRMATION MODAL */}
+      {proposalToWithdraw && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col transform transition-all">
+            <div className="p-6 flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Withdraw Proposal?</h3>
+              <p className="text-slate-500 mb-6">
+                Are you sure you want to withdraw your R&D proposal for <span className="font-bold text-slate-700">"{proposalToWithdraw.title}"</span>? This action cannot be undone and will release the problem back to the state pool.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={() => setProposalToWithdraw(null)}
+                  className="flex-1 px-4 py-2.5 rounded-lg font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={executeWithdraw}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2.5 rounded-lg font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition-colors flex justify-center items-center"
+                >
+                  {isSubmitting ? 'Withdrawing...' : 'Yes, Withdraw'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

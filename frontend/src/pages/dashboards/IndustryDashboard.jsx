@@ -2,25 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
-  LogOut, MapPin, Building, Briefcase, Bell, Search, 
-  Factory, X, FileText, CheckCircle, TrendingUp,
-  User, Edit, Save, Handshake, Users, Menu
+  LogOut, MapPin, Factory, Bell, 
+  CheckCircle, Briefcase, FileText,
+  User, Edit, Save, DollarSign, Target, Menu, X, Activity, Award,
+  BookOpen, ShieldCheck, Shield, Download, AlertTriangle, Trash2
 } from 'lucide-react';
 
 const IndustryDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('open'); // 'open', 'my_investments', 'profile'
-  
+
   const [challenges, setChallenges] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [fundingAmount, setFundingAmount] = useState('');
+  const [mentorshipNotes, setMentorshipNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  const [selectedReport, setSelectedReport] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  // State for custom error message and withdraw confirmation
+  const [fundingError, setFundingError] = useState('');
+  const [investmentToWithdraw, setInvestmentToWithdraw] = useState(null);
+
   const [userProfile, setUserProfile] = useState({
     organization_name: '', first_name: '', last_name: '', email: '', 
-    phone: '', district: '', expertise_domain: ''
+    phone: '', district: '', role: ''
   });
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState({ text: '', type: '' });
@@ -34,8 +41,10 @@ const IndustryDashboard = () => {
         const profileRes = await axios.get('http://127.0.0.1:8000/api/auth/profile/', { headers });
         setUserProfile(profileRes.data);
 
+        // Fetching reports
         const reportsRes = await axios.get('http://127.0.0.1:8000/api/challenges/reports/', { headers });
         setChallenges(reportsRes.data);
+
       } catch (error) {
         console.error("Error fetching data", error);
         if (error.response?.status === 401) handleLogout();
@@ -62,7 +71,7 @@ const IndustryDashboard = () => {
       });
       setUserProfile(response.data);
       setIsEditingProfile(false);
-      setProfileMessage({ text: 'CSR profile updated successfully!', type: 'success' });
+      setProfileMessage({ text: 'Corporate profile updated successfully!', type: 'success' });
       setTimeout(() => setProfileMessage({ text: '', type: '' }), 3000);
     } catch (error) {
       console.error(error);
@@ -71,64 +80,104 @@ const IndustryDashboard = () => {
   };
 
   const handleApproveFunding = async () => {
-    if (!window.confirm("Approve CSR funding and mentorship for this University proposal?")) return;
+    // Custom error handling instead of alert()
+    if (!fundingAmount.trim() || isNaN(fundingAmount) || Number(fundingAmount) <= 0) {
+      setFundingError("Please enter a valid CSR funding amount greater than zero.");
+      return;
+    }
+    setFundingError(''); // Clear error if valid
     setIsSubmitting(true);
-    
+
     try {
       const token = localStorage.getItem('access_token');
-      
+      const actionLogEntry = `\n[${new Date().toLocaleDateString()}] INDUSTRY FUNDING APPROVED: ${userProfile.organization_name} allocated ₹${Number(fundingAmount).toLocaleString('en-IN')} for this project. Notes: ${mentorshipNotes || 'None'}`;
+
       const response = await axios.patch(
         `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
         { 
-            status: 'in_progress', // Move it from proposed to implementation
-            assigned_industry: userProfile.id 
+            status: 'in_progress', // Move to In Progress!
+            assigned_industry: userProfile.id,
+            action_logs: (selectedReport.action_logs || '') + actionLogEntry
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       setChallenges(challenges.map(c => c.id === selectedReport.id ? response.data : c));
-      setSelectedReport(null); 
+      setSelectedReport(response.data); // Update modal state immediately
+      setFundingAmount('');
+      setMentorshipNotes('');
     } catch (error) {
-      console.error("Error submitting funding:", error);
-      alert("Failed to approve funding.");
+      console.error("Error approving funding:", error);
+      setFundingError("Failed to approve funding. Please check your connection.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // CSR Pipeline Logic
-  // Show challenges that have a proposal from a university
+  const executeWithdrawFunding = async () => {
+    if (!investmentToWithdraw) return;
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const actionLogEntry = `\n[${new Date().toLocaleDateString()}] CSR FUNDING RETRACTED: ${userProfile.organization_name} has officially withdrawn their funding. The R&D proposal is open for new sponsors.`;
+
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/challenges/reports/${investmentToWithdraw.id}/`,
+        { 
+            status: 'proposal_submitted', // Revert back to awaiting funding
+            assigned_industry: null,      // Remove this industry from the project
+            action_logs: (investmentToWithdraw.action_logs || '') + actionLogEntry
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setChallenges(challenges.map(c => c.id === investmentToWithdraw.id ? response.data : c));
+      setSelectedReport(null); // Close main modal
+      setInvestmentToWithdraw(null); // Close warning modal
+    } catch (error) {
+      console.error("Error withdrawing funding:", error);
+      alert("Failed to withdraw funding. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Filter logic
   const openProposals = challenges.filter(c => c.status === 'proposal_submitted');
-  // Show challenges this specific company funded
   const myInvestments = challenges.filter(c => c.assigned_industry === userProfile?.id);
-  
   const displayList = activeTab === 'open' ? openProposals : myInvestments;
+
+  const getMediaUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `http://127.0.0.1:8000${path}`;
+  };
 
   const NavLinks = () => (
     <>
-      <button onClick={() => {setActiveTab('open'); setMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg shadow-sm transition-colors ${activeTab === 'open' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
-        <FileText className="w-5 h-5" /> University Proposals
+      <button onClick={() => {setActiveTab('open'); setMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg shadow-sm transition-colors ${activeTab === 'open' ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+        <Target className="w-5 h-5" /> Open Proposals
       </button>
-      <button onClick={() => {setActiveTab('my_investments'); setMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg shadow-sm transition-colors ${activeTab === 'my_investments' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
-        <Handshake className="w-5 h-5" /> Our CSR Investments
+      <button onClick={() => {setActiveTab('my_investments'); setMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg shadow-sm transition-colors ${activeTab === 'my_investments' ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+        <Briefcase className="w-5 h-5" /> Active CSR Investments
       </button>
-      <button onClick={() => {setActiveTab('profile'); setMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg shadow-sm transition-colors ${activeTab === 'profile' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
-        <Building className="w-5 h-5" /> Company Profile
+      <button onClick={() => {setActiveTab('profile'); setMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg shadow-sm transition-colors ${activeTab === 'profile' ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+        <User className="w-5 h-5" /> Corporate Profile
       </button>
     </>
   );
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
-      
+
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-slate-900 text-white hidden md:flex flex-col h-screen sticky top-0 shrink-0">
         <div className="p-6 border-b border-slate-800">
           <div className="flex items-center gap-2 mb-1">
-            <Factory className="w-8 h-8 text-indigo-400" />
+            <Factory className="w-8 h-8 text-emerald-500" />
             <h2 className="text-2xl font-bold tracking-tight">SANKALP</h2>
           </div>
-          <p className="text-slate-400 text-sm">Industry CSR Portal</p>
+          <p className="text-slate-400 text-sm">Industry CSR Hub</p>
         </div>
         <nav className="flex-1 px-4 space-y-2 mt-6">
           <NavLinks />
@@ -142,7 +191,7 @@ const IndustryDashboard = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        
+
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shrink-0">
           <div className="flex items-center gap-3">
@@ -150,14 +199,14 @@ const IndustryDashboard = () => {
               <Menu className="w-6 h-6" />
             </button>
             <h1 className="text-xl font-semibold text-slate-800 hidden sm:block">
-              {activeTab === 'profile' ? 'CSR Settings' : userProfile?.organization_name || 'Industry Partner'}
+              {activeTab === 'profile' ? 'Corporate Settings' : userProfile?.organization_name || 'Industry Partner'}
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <button className="text-slate-400 hover:text-indigo-600 transition-colors">
+            <button className="text-slate-400 hover:text-emerald-600 transition-colors">
               <Bell className="w-6 h-6" />
             </button>
-            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold border border-indigo-200 uppercase">
+            <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold border border-emerald-200 uppercase">
               {userProfile?.organization_name ? userProfile.organization_name.charAt(0) : 'I'}
             </div>
           </div>
@@ -169,7 +218,7 @@ const IndustryDashboard = () => {
             <div className="w-64 bg-slate-900 h-full flex flex-col" onClick={e => e.stopPropagation()}>
               <div className="p-6 border-b border-slate-800 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <Factory className="w-6 h-6 text-indigo-400" />
+                  <Factory className="w-6 h-6 text-emerald-500" />
                   <h2 className="text-xl font-bold text-white tracking-tight">SANKALP</h2>
                 </div>
                 <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400"><X className="w-5 h-5"/></button>
@@ -181,38 +230,38 @@ const IndustryDashboard = () => {
 
         {/* Scrollable Workspace */}
         <div className="p-4 md:p-8 flex-1 overflow-auto bg-slate-50/50">
-          
-          {/* BANNER FOR MISSING PROFILE */}
-          {activeTab === 'open' && !userProfile?.expertise_domain && !isLoading && (
-            <div className="mb-6 p-5 bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 border border-indigo-800">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center shrink-0">
-                  <Briefcase className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Define CSR Focus Areas</h3>
-                  <p className="text-slate-300 text-sm mt-1 max-w-2xl">
-                    Add your company's CSR mandate (e.g., Environment, Education) to help universities send you tailored R&D proposals for funding.
-                  </p>
-                </div>
-              </div>
-              <button onClick={() => setActiveTab('profile')} className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-colors w-full md:w-auto">
-                Set Up Profile
-              </button>
-            </div>
-          )}
 
           {(activeTab === 'open' || activeTab === 'my_investments') && (
             <>
-              <div className="mb-6 border-b border-slate-200 pb-4">
-                <h2 className="text-2xl font-bold text-slate-900">
-                  {activeTab === 'open' ? 'Academic R&D Proposals' : 'Our Active CSR Implementations'}
-                </h2>
-                <p className="text-slate-500 mt-1 text-sm">
-                  {activeTab === 'open' 
-                    ? 'Review solutions proposed by Universities and provide funding & mentorship.' 
-                    : 'Track the progress of civic solutions funded by your organization.'}
-                </p>
+              {/* KPI Summary for Industry */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                  <div>
+                    <div className="text-slate-500 text-xs font-bold mb-1 uppercase tracking-wider">Active CSR Projects</div>
+                    <div className="text-3xl font-bold text-slate-800">{myInvestments.length}</div>
+                  </div>
+                  <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600"><Briefcase className="w-6 h-6" /></div>
+                </div>
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                  <div>
+                    <div className="text-slate-500 text-xs font-bold mb-1 uppercase tracking-wider">Total Proposals</div>
+                    <div className="text-3xl font-bold text-slate-800">{openProposals.length}</div>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600"><FileText className="w-6 h-6" /></div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 gap-4 border-b border-slate-200 pb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">
+                    {activeTab === 'open' ? 'Academic Innovation Proposals' : 'Our CSR Portfolio'}
+                  </h2>
+                  <p className="text-slate-500 mt-1 text-sm">
+                    {activeTab === 'open' 
+                      ? 'Review R&D proposals from universities and approve funding.' 
+                      : 'Projects your organization is actively funding and mentoring.'}
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -220,38 +269,34 @@ const IndustryDashboard = () => {
                   <div className="col-span-full p-12 text-center text-slate-500">Loading proposals...</div>
                 ) : displayList.length === 0 ? (
                   <div className="col-span-full p-12 text-center bg-white rounded-xl border border-dashed border-slate-300">
-                    <TrendingUp className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-slate-500 font-medium text-lg">No active proposals found.</p>
+                    <Factory className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-500 font-medium text-lg">No proposals currently available.</p>
                   </div>
                 ) : (
                   displayList.map((report) => (
-                    <div key={report.id} className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden hover:shadow-md transition-shadow relative">
-                      
-                      {/* Priority Tag */}
-                      <div className="absolute top-4 right-4">
-                         <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
-                            report.priority === 'Critical' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {report.priority}
-                         </span>
-                      </div>
-
-                      <div className="p-5 border-b border-slate-100 flex-1 pt-8">
-                        <div className="flex items-center gap-2 text-indigo-700 text-xs font-bold mb-2 uppercase tracking-wide">
-                           <Building className="w-3.5 h-3.5" /> Proposed by {report.university_name}
+                    <div key={report.id} className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="p-5 border-b border-slate-100 flex-1">
+                        <div className="flex justify-between items-start mb-3">
+                           <span className="text-xs text-slate-400 font-medium">#{report.id.toString().padStart(4, '0')}</span>
+                           <span className="text-xs font-bold px-2 py-0.5 rounded uppercase bg-emerald-100 text-emerald-800">
+                             {report.category}
+                           </span>
                         </div>
                         <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2">{report.title}</h3>
-                        <p className="text-sm text-slate-600 line-clamp-3 mb-4">{report.description}</p>
-                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-                          <MapPin className="w-4 h-4 text-slate-400 shrink-0" /> <span className="truncate">Implementation: {report.location}</span>
+                        <p className="text-sm text-slate-600 line-clamp-2 mb-4">{report.description}</p>
+
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-2">
+                           <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                             <MapPin className="w-4 h-4 text-slate-400 shrink-0" /> <span className="truncate">{report.location}</span>
+                           </div>
+                           <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                             <BookOpen className="w-4 h-4 text-slate-400 shrink-0" /> <span className="truncate">{report.university_name}</span>
+                           </div>
                         </div>
                       </div>
-                      <div className="p-4 bg-slate-50 flex justify-between items-center">
-                         <div className="text-xs font-bold text-slate-500 uppercase tracking-wide">
-                            {report.category}
-                         </div>
-                         <button onClick={() => setSelectedReport(report)} className="text-indigo-700 font-bold text-sm hover:text-indigo-800 bg-indigo-100 hover:bg-indigo-200 px-4 py-1.5 rounded-lg transition-colors">
-                            {activeTab === 'open' ? 'Review & Fund' : 'Track ROI'}
+                      <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                         <button onClick={() => setSelectedReport(report)} className="text-emerald-700 font-bold text-sm hover:text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 w-full justify-center">
+                            {activeTab === 'open' ? 'Review Proposal' : 'View Project Details'}
                          </button>
                       </div>
                     </div>
@@ -266,16 +311,16 @@ const IndustryDashboard = () => {
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="bg-slate-900 px-6 py-6 md:px-8 text-white flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                   <div>
-                    <h2 className="text-2xl font-bold">Company CSR Profile</h2>
-                    <p className="text-slate-400 text-sm mt-1">Define your Corporate Social Responsibility mandate.</p>
+                    <h2 className="text-2xl font-bold">Corporate Identity Setup</h2>
+                    <p className="text-slate-400 text-sm mt-1">Manage your CSR profile and contact details.</p>
                   </div>
                   {!isEditingProfile && (
-                    <button onClick={() => setIsEditingProfile(true)} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 border border-white/20">
+                    <button onClick={() => setIsEditingProfile(true)} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 border border-white/20 whitespace-nowrap">
                       <Edit className="w-4 h-4" /> Edit Profile
                     </button>
                   )}
                 </div>
-                
+
                 <div className="p-6 md:p-8">
                   {profileMessage.text && (
                     <div className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${profileMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
@@ -284,36 +329,32 @@ const IndustryDashboard = () => {
                   )}
 
                   <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Company Name</label>
-                        <input type="text" disabled={!isEditingProfile} value={userProfile.organization_name || ''} onChange={(e) => setUserProfile({...userProfile, organization_name: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none disabled:bg-slate-50 disabled:text-slate-500 text-sm" placeholder="e.g., Tata Steel" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Headquarters Location</label>
-                        <input type="text" disabled={!isEditingProfile} value={userProfile.district || ''} onChange={(e) => setUserProfile({...userProfile, district: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none disabled:bg-slate-50 disabled:text-slate-500 text-sm" placeholder="e.g., Jamshedpur" />
-                      </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Company / Organization Name</label>
+                      <input type="text" disabled={!isEditingProfile} value={userProfile.organization_name || ''} onChange={(e) => setUserProfile({...userProfile, organization_name: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-slate-50 disabled:text-slate-500 text-sm" placeholder="e.g., Tata Steel CSR" />
                     </div>
-
-                    <div className="md:col-span-2 pt-4 border-t border-slate-100">
-                      <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <Handshake className="w-5 h-5 text-indigo-500" /> CSR Mandate & Funding Goals
-                      </h3>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">First Name (Rep)</label>
+                      <input type="text" disabled={!isEditingProfile} value={userProfile.first_name || ''} onChange={(e) => setUserProfile({...userProfile, first_name: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-slate-50 disabled:text-slate-500 text-sm" />
                     </div>
-
-                    <div className="md:col-span-2 space-y-5">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Target Sectors (Keywords)</label>
-                        <p className="text-xs text-slate-500 mb-2">What causes does your company support? (e.g., Education, Clean Water, Smart City)</p>
-                        <input type="text" disabled={!isEditingProfile} value={userProfile.expertise_domain || ''} onChange={(e) => setUserProfile({...userProfile, expertise_domain: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none disabled:bg-slate-50 disabled:text-slate-700 text-sm font-medium" placeholder="e.g., Sustainability, Rural Infrastructure" />
-                      </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Last Name (Rep)</label>
+                      <input type="text" disabled={!isEditingProfile} value={userProfile.last_name || ''} onChange={(e) => setUserProfile({...userProfile, last_name: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-slate-50 disabled:text-slate-500 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Official Email</label>
+                      <input type="email" disabled value={userProfile.email || ''} className="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 outline-none text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">HQ District</label>
+                      <input type="text" disabled={!isEditingProfile} value={userProfile.district || ''} onChange={(e) => setUserProfile({...userProfile, district: e.target.value})} className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-slate-50 disabled:text-slate-500 text-sm" placeholder="e.g., Ranchi" />
                     </div>
 
                     {isEditingProfile && (
                       <div className="md:col-span-2 flex justify-end gap-3 pt-6 border-t border-slate-100 mt-2">
                         <button type="button" onClick={() => setIsEditingProfile(false)} className="px-6 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors w-full sm:w-auto">Cancel</button>
-                        <button type="submit" className="px-6 py-2.5 rounded-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
-                          <Save className="w-4 h-4" /> Save Profile
+                        <button type="submit" className="px-6 py-2.5 rounded-lg font-medium text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
+                          <Save className="w-4 h-4" /> Save Corporate Profile
                         </button>
                       </div>
                     )}
@@ -326,80 +367,207 @@ const IndustryDashboard = () => {
         </div>
       </main>
 
-      {/* Review Modal */}
+      {/* PROPOSAL REVIEW MODAL */}
       {selectedReport && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
-            
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh]">
+
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-start bg-slate-900 text-white shrink-0">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <Handshake className="w-6 h-6 text-indigo-400" />
-                  <h3 className="text-xl font-bold">University CSR Proposal Review</h3>
+                  <Target className="w-6 h-6 text-emerald-400" />
+                  <h3 className="text-xl font-bold">CSR Funding Review</h3>
                 </div>
-                <p className="text-sm text-slate-400">Project ID: SANKALP-{selectedReport.id.toString().padStart(4, '0')}</p>
+                <p className="text-sm text-slate-400">Govt Routed ID: SANKALP-{selectedReport.id.toString().padStart(4, '0')}</p>
               </div>
-              <button onClick={() => setSelectedReport(null)} className="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full transition-colors">
+              <button onClick={() => {setSelectedReport(null); setFundingAmount(''); setMentorshipNotes(''); setFundingError('');}} className="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
-            <div className="overflow-y-auto bg-slate-50 flex-1 grid md:grid-cols-2">
-              
-              {/* Left Side: Original Problem */}
-              <div className="p-6 border-b md:border-b-0 md:border-r border-slate-200 space-y-6 bg-white">
-                <div>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Original Civic Problem</h4>
-                  <p className="text-xl font-bold text-slate-900">{selectedReport.title}</p>
-                </div>
-                
-                <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <span className="flex items-center gap-1"><MapPin className="w-4 h-4 text-indigo-600"/> {selectedReport.location}</span>
-                  <span className="hidden sm:inline">•</span>
-                  <span className="uppercase text-indigo-700">{selectedReport.category}</span>
-                </div>
 
-                <div>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Context</h4>
-                  <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed">
-                    {selectedReport.description}
+            <div className="overflow-y-auto bg-slate-50 flex-1 grid lg:grid-cols-2">
+
+              {/* Left Side: Challenge & Proposal */}
+              <div className="p-6 border-b lg:border-b-0 lg:border-r border-slate-200 space-y-6 bg-white">
+
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1 border-b border-slate-100 pb-2">1. Original Citizen Report</h4>
+                  <div>
+                    <p className="text-lg font-bold text-slate-900 leading-tight mb-2">{selectedReport.title}</p>
+                    <p className="text-sm text-slate-600 mb-2 whitespace-pre-wrap">{selectedReport.description}</p>
+                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">
+                      <MapPin className="w-3.5 h-3.5" /> {selectedReport.location}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Side: University Solution */}
-              <div className="p-6 flex flex-col bg-indigo-50/30">
-                <div className="flex items-center gap-2 text-indigo-800 text-sm font-bold mb-4 bg-indigo-100 px-4 py-2 rounded-lg border border-indigo-200">
-                  <Building className="w-4 h-4" /> Academic Solution by: {selectedReport.university_name || 'University'}
-                </div>
-
-                <div className="flex-1 flex flex-col">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Technical Proposal & R&D Strategy</h4>
-                  <div className="bg-white p-5 rounded-xl border border-slate-200 text-slate-700 text-sm whitespace-pre-wrap leading-relaxed shadow-sm flex-1 font-mono overflow-y-auto">
-                    {selectedReport.proposal_details || 'No proposal text provided.'}
+                <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                     <h4 className="text-xs font-bold text-emerald-600 uppercase tracking-wide">2. Academic R&D Proposal</h4>
+                     <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 flex items-center gap-1">
+                        <BookOpen className="w-3 h-3" /> {selectedReport.university_name}
+                     </span>
                   </div>
-                  
-                  {selectedReport.status === 'proposal_submitted' ? (
-                    <button 
-                      onClick={handleApproveFunding}
-                      disabled={isSubmitting}
-                      className="mt-6 w-full py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      <CheckCircle className="w-5 h-5" /> {isSubmitting ? 'Processing...' : 'Approve Mentorship & CSR Funding'}
-                    </button>
-                  ) : (
-                    <div className="mt-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center shadow-sm">
-                      <CheckCircle className="w-8 h-8 text-emerald-600 mx-auto mb-1" />
-                      <h4 className="text-emerald-900 font-bold">Funding Active</h4>
-                      <p className="text-emerald-700 text-sm">Your organization is officially mentoring this project.</p>
+
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-sm whitespace-pre-wrap leading-relaxed font-mono">
+                    {selectedReport.proposal_details || "No proposal details provided."}
+                  </div>
+
+                  {/* DISPLAY THE UPLOADED MULTIMEDIA FILE TO THE INDUSTRY PARTNER */}
+                  {selectedReport.proposal_document && (
+                    <div className="mt-3">
+                      <a 
+                        href={getMediaUrl(selectedReport.proposal_document)} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors"
+                      >
+                        <Download className="w-4 h-4" /> Download Pitch Deck / Diagram
+                      </a>
                     </div>
                   )}
                 </div>
+
+                {/* Ecosystem Activity Timeline */}
+                <div className="space-y-3 pt-4 border-t border-slate-100">
+                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Ecosystem Activity Timeline</h4>
+                   <div className="bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono whitespace-pre-wrap max-h-48 overflow-y-auto">
+                     {selectedReport.action_logs || "Timeline initialized..."}
+                   </div>
+                </div>
+
+              </div>
+
+              {/* Right Side: Action Area */}
+              <div className="p-6 flex flex-col bg-slate-50">
+                {selectedReport.status === 'proposal_submitted' ? (
+                  // Funding Action State
+                  <div className="flex-1 flex flex-col">
+                    <div className="bg-white p-5 rounded-xl border border-emerald-200 shadow-sm mb-6">
+                      <h4 className="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+                        <DollarSign className="w-5 h-5 text-emerald-600" /> Allocate CSR Funding
+                      </h4>
+                      <p className="text-sm text-slate-500 mb-4">Sponsor this academic research to solve the societal challenge.</p>
+
+                      {/* Display custom error message inline */}
+                      {fundingError && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 text-red-700 text-sm font-medium">
+                          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>{fundingError}</span>
+                        </div>
+                      )}
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-bold text-slate-700 mb-1">Funding Amount (₹) <span className="text-red-500">*</span></label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₹</span>
+                            <input 
+                              type="number" 
+                              value={fundingAmount} 
+                              onChange={(e) => {
+                                setFundingAmount(e.target.value);
+                                if (e.target.value) setFundingError(''); // clear error when typing
+                              }} 
+                              placeholder="e.g., 500000" 
+                              className={`w-full pl-8 pr-4 py-2.5 rounded-lg border ${fundingError ? 'border-red-400 focus:ring-red-500' : 'border-slate-300 focus:ring-emerald-500'} focus:ring-2 outline-none text-sm font-bold bg-white`} 
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-bold text-slate-700 mb-1">Mentorship & Resource Notes (Optional)</label>
+                          <textarea 
+                            value={mentorshipNotes}
+                            onChange={(e) => setMentorshipNotes(e.target.value)}
+                            placeholder="Will you provide engineering mentors or materials?"
+                            className="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none resize-none text-sm bg-white min-h-[100px]"
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto">
+                      <button 
+                        onClick={handleApproveFunding}
+                        disabled={isSubmitting}
+                        className="w-full py-3.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        <Award className="w-5 h-5" /> {isSubmitting ? 'Processing...' : 'Approve Funding & Start Project'}
+                      </button>
+                      <p className="text-center text-xs text-slate-400 mt-3 flex items-center justify-center gap-1">
+                        <Shield className="w-3.5 h-3.5" /> This action is recorded in the immutable ecosystem log.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  // Active Investment State
+                  <div className="flex-1 flex flex-col justify-center items-center text-center p-8">
+                    
+                    {/* NEW: Retract Funding Action Header */}
+                    <div className="w-full flex justify-end mb-4">
+                      <button 
+                        onClick={() => setInvestmentToWithdraw(selectedReport)}
+                        className="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 px-3 py-1.5 rounded border border-red-200 flex items-center gap-1.5 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5"/> Retract Funding
+                      </button>
+                    </div>
+
+                    <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4 border border-emerald-200 shadow-inner">
+                      <Award className="w-10 h-10 text-emerald-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Project Funded</h3>
+                    <p className="text-slate-500 max-w-md">
+                      Your organization has successfully sponsored this project. The University team is currently in the R&D and implementation phase.
+                    </p>
+
+                    <div className="mt-8 w-full max-w-md bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                       <span className="text-sm font-bold text-slate-500 uppercase tracking-wide">Project Status</span>
+                       <span className="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                         {selectedReport.status_display}
+                       </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* WITHDRAW FUNDING CONFIRMATION MODAL */}
+      {investmentToWithdraw && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col transform transition-all">
+            <div className="p-6 flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
+                <AlertTriangle className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Retract CSR Funding?</h3>
+              <p className="text-slate-500 mb-6 text-sm">
+                Are you sure you want to withdraw your CSR funding for <span className="font-bold text-slate-700">"{investmentToWithdraw.title}"</span>? This will return the project to the "Awaiting Funding" stage and cancel your mentorship.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={() => setInvestmentToWithdraw(null)}
+                  className="flex-1 px-4 py-2.5 rounded-lg font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={executeWithdrawFunding}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2.5 rounded-lg font-medium text-white bg-red-600 hover:bg-red-700 shadow-sm transition-colors flex justify-center items-center gap-2"
+                >
+                  {isSubmitting ? 'Retracting...' : 'Yes, Retract Funding'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
