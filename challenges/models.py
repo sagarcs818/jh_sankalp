@@ -27,13 +27,25 @@ class Challenge(models.Model):
     # New Fields for SIH Flow (University Collaboration)
     assigned_university = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='assigned_challenges', blank=True, null=True)
     proposal_details = models.TextField(blank=True, null=True)
+    proposal_document = models.FileField(upload_to='proposals/', blank=True, null=True)
+
+    # DEPLOYMENT FIELDS
+    deployment_notes = models.TextField(blank=True, null=True)
+    resolution_evidence = models.FileField(upload_to='resolution_evidence/', blank=True, null=True)
 
     # ADD THIS FOR INDUSTRY CSR FUNDING:
     assigned_industry = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='funded_challenges', blank=True, null=True)
 
     # Internal tracking fields
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
-    priority = models.CharField(max_length=20, default='Medium') # AI will calculate this later!
+    priority = models.CharField(max_length=20, default='Medium') 
+    
+    # Citizen Impact Deduplication Field
+    report_count = models.PositiveIntegerField(default=1, help_text="Number of citizens reporting this same issue")
+
+    # NEW: Store timestamped logs of every action taken
+    action_logs = models.TextField(blank=True, null=True, default='')
+
     reported_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reported_challenges')
     created_at = models.DateTimeField(auto_now_add=True)
 

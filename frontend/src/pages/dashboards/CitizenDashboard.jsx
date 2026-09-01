@@ -4,7 +4,7 @@ import axios from 'axios';
 import { 
   LogOut, PlusCircle, MapPin, AlertTriangle, 
   Clock, CheckCircle, Activity, Bell, X, Camera, UploadCloud,
-  Trash2, Edit, User, Save, Loader2, Search
+  Trash2, Edit, User, Save, Loader2, Search, BookOpen, Factory
 } from 'lucide-react';
 
 const CitizenDashboard = () => {
@@ -62,7 +62,6 @@ const CitizenDashboard = () => {
               markerRef.current.setLatLng([lat, lng]);
           } else {
               markerRef.current = window.L.marker([lat, lng], { icon: customIcon, draggable: true }).addTo(mapInstance);
-              // Make pin draggable!
               markerRef.current.on('dragend', (event) => {
                   const position = event.target.getLatLng();
                   setFormData(prev => ({ ...prev, location: `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}` }));
@@ -113,43 +112,12 @@ const CitizenDashboard = () => {
     };
   }, [isModalOpen]);
 
-  // Live GPS Sync
-  useEffect(() => {
-    if (mapRef.current && window.L && formData.location) {
-        const parts = formData.location.split(',');
-        if(parts.length === 2) {
-           const lat = parseFloat(parts[0]);
-           const lng = parseFloat(parts[1]);
-           if(!isNaN(lat) && !isNaN(lng)) {
-               if (markerRef.current) {
-                   markerRef.current.setLatLng([lat, lng]);
-               } else {
-                   const customIcon = window.L.divIcon({
-                     className: 'bg-transparent',
-                     html: `<div class="text-red-600 drop-shadow-lg -mt-8 -ml-4 cursor-pointer hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg></div>`,
-                     iconSize: [36, 36],
-                     iconAnchor: [18, 36]
-                   });
-                   markerRef.current = window.L.marker([lat, lng], { icon: customIcon, draggable: true }).addTo(mapRef.current);
-                   markerRef.current.on('dragend', (event) => {
-                       const position = event.target.getLatLng();
-                       setFormData(prev => ({ ...prev, location: `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}` }));
-                   });
-               }
-               mapRef.current.setView([lat, lng], 15, { animate: true, duration: 1 });
-           }
-        }
-    }
-  }, [formData.location]);
-
   const [selectedReport, setSelectedReport] = useState(null);
   const [reportToDelete, setReportToDelete] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   
-  // NEW: Reference to the top of the modal for auto-scrolling
   const modalTopRef = useRef(null);
 
-  // NEW: Auto-scroll to top whenever an error occurs
   useEffect(() => {
     if (errorMessage && modalTopRef.current) {
       modalTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -277,15 +245,10 @@ const CitizenDashboard = () => {
                iconAnchor: [18, 36]
              });
              markerRef.current = window.L.marker([newLat, newLng], { icon: customIcon, draggable: true }).addTo(mapRef.current);
-             markerRef.current.on('dragend', (event) => {
-                 const position = event.target.getLatLng();
-                 setFormData(prev => ({ ...prev, location: `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}` }));
-             });
           }
           mapRef.current.setView([newLat, newLng], 15, { animate: true, duration: 1 });
         }
       } else {
-        // UPDATED ERROR MESSAGE AS REQUESTED
         setErrorMessage("Address not found! Please select a location by clicking/dragging on the map or enter a proper name.");
       }
     } catch (error) {
@@ -468,7 +431,7 @@ const CitizenDashboard = () => {
                         }`}>
                           {report.priority} Priority
                         </span>
-                        <button onClick={() => setSelectedReport(report)} className="text-blue-600 hover:text-blue-800 font-medium text-sm">Review</button>
+                        <button onClick={() => setSelectedReport(report)} className="text-blue-600 hover:text-blue-800 font-medium text-sm">Track Progress</button>
                       </div>
                     </div>
                   ))
@@ -592,6 +555,7 @@ const CitizenDashboard = () => {
         </div>
       </main>
 
+      {/* REPORT SUBMISSION MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -609,7 +573,6 @@ const CitizenDashboard = () => {
             </div>
             
             <div className="p-6 overflow-y-auto">
-              {/* Invisible div to scroll to */}
               <div ref={modalTopRef}></div>
               
               {errorMessage && (
@@ -664,7 +627,6 @@ const CitizenDashboard = () => {
                     
                     <div className="mb-3 rounded-xl border border-slate-300 shadow-inner overflow-hidden relative group">
                       <div id="citizen-map" className="w-full h-56 z-10"></div>
-                      
                       <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-slate-900/10 group-hover:opacity-0 transition-opacity z-20">
                          <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-sm font-bold text-slate-700 border border-slate-200 flex items-center gap-2">
                            <MapPin className="w-4 h-4 text-red-500" /> Pan, zoom, click, or drag the pin!
@@ -759,14 +721,15 @@ const CitizenDashboard = () => {
         </div>
       )}
 
+      {/* CITIZEN REVIEW & TRACKING MODAL */}
       {selectedReport && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-start bg-blue-900 text-white shrink-0">
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <Activity className="w-6 h-6 text-blue-400" />
-                  <h3 className="text-xl font-bold">My Report Review</h3>
+                  <h3 className="text-xl font-bold">My Report Tracking</h3>
                 </div>
                 <p className="text-sm text-blue-200">Report ID: SANKALP-{selectedReport.id.toString().padStart(4, '0')}</p>
               </div>
@@ -779,6 +742,8 @@ const CitizenDashboard = () => {
             </div>
             
             <div className="p-6 overflow-y-auto bg-slate-50 flex-1 grid md:grid-cols-2 gap-6">
+              
+              {/* Left Column: The Report */}
               <div className="space-y-6">
                 <div>
                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Issue Title</h4>
@@ -804,30 +769,73 @@ const CitizenDashboard = () => {
                     {selectedReport.description}
                   </div>
                 </div>
+
+                {/* --- THIS IS THE NEW TIMELINE TRACKING FOR THE CITIZEN --- */}
+                <div className="pt-4 border-t border-slate-200">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-teal-600" /> Live Ecosystem Tracking
+                  </h4>
+                  {selectedReport.action_logs ? (
+                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-teal-400 text-xs font-mono whitespace-pre-wrap leading-relaxed shadow-inner max-h-48 overflow-y-auto">
+                      {selectedReport.action_logs}
+                    </div>
+                  ) : (
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-500 text-sm italic">
+                      Your report is securely logged and is awaiting government triage...
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex flex-col">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Uploaded Evidence</h4>
-                {selectedReport.evidence ? (
-                  <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-black flex-1 flex items-center justify-center min-h-[250px]">
-                    <img 
-                      src={getMediaUrl(selectedReport.evidence)} 
-                      alt="Evidence" 
-                      className="w-full h-full object-contain" 
-                    />
+              {/* Right Column: Partners & Evidence */}
+              <div className="flex flex-col space-y-6">
+                
+                {/* --- SHOW WHO IS FIXING THE PROBLEM --- */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BookOpen className="w-4 h-4 text-indigo-500" />
+                      <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wide">University Partner</span>
+                    </div>
+                    <span className="text-sm font-bold text-indigo-900">
+                      {selectedReport.university_name !== "Open to all Universities" ? selectedReport.university_name : "Pending Match"}
+                    </span>
                   </div>
-                ) : (
-                  <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-100 flex-1 flex flex-col items-center justify-center text-slate-500 min-h-[250px]">
-                    <AlertTriangle className="w-8 h-8 mb-2 opacity-50" />
-                    <p className="text-sm font-medium">No visual evidence provided</p>
+                  <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Factory className="w-4 h-4 text-emerald-600" />
+                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Industry Sponsor</span>
+                    </div>
+                    <span className="text-sm font-bold text-emerald-900">
+                      {selectedReport.industry_name !== "Awaiting CSR Funding" ? selectedReport.industry_name : "Pending Funding"}
+                    </span>
                   </div>
-                )}
+                </div>
+
+                <div className="flex flex-col flex-1">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Uploaded Evidence</h4>
+                  {selectedReport.evidence ? (
+                    <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-black flex-1 flex items-center justify-center min-h-[200px]">
+                      <img 
+                        src={getMediaUrl(selectedReport.evidence)} 
+                        alt="Evidence" 
+                        className="w-full h-full object-contain" 
+                      />
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-100 flex-1 flex flex-col items-center justify-center text-slate-500 min-h-[200px]">
+                      <AlertTriangle className="w-8 h-8 mb-2 opacity-50" />
+                      <p className="text-sm font-medium">No visual evidence provided</p>
+                    </div>
+                  )}
+                </div>
+
               </div>
             </div>
             
             <div className="px-6 py-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
               <div className="text-sm font-semibold text-slate-500">
-                Current Status: <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded">{selectedReport.status_display}</span>
+                Current Status: <span className="text-slate-800 bg-slate-100 px-2 py-1 rounded font-bold">{selectedReport.status_display}</span>
               </div>
               
               <div className="flex gap-2 w-full sm:w-auto justify-end">

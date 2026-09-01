@@ -21,13 +21,15 @@ class ChallengeSerializer(serializers.ModelSerializer):
         model = Challenge
         fields = [
             'id', 'title', 'category', 'location', 'description', 
-            'evidence', 'status', 'status_display', 'priority', 
+            'evidence', 'status', 'status_display', 'priority', 'report_count',
             'date_formatted', 'created_at', 'reporter_name', 'reporter_phone', 'reporter_email',
             'assigned_university', 'proposal_details', 'university_name',
-            'assigned_industry', 'industry_name' # <-- ADD THESE TWO TO FIELDS
+            'assigned_industry', 'industry_name',
+            'action_logs',
+            'proposal_document', # <-- ADD THIS! (University pitch deck)
+            'resolution_evidence' # <-- ADD THIS! (University final deployment proof)
         ]
-        # (Make sure 'evidence' is NOT in read_only_fields)
-        read_only_fields = ['priority']
+        read_only_fields = ['priority', 'action_logs']
 
     # Helper methods to safely extract the user data
     def get_reporter_name(self, obj):
@@ -51,8 +53,22 @@ class ChallengeSerializer(serializers.ModelSerializer):
             return obj.assigned_university.organization_name
         return "Open to all Universities"
 
-    # ADD THIS FUNCTION AT THE VERY BOTTOM OF THE FILE:
     def get_industry_name(self, obj):
         if obj.assigned_industry and getattr(obj.assigned_industry, 'organization_name', None):
             return obj.assigned_industry.organization_name
         return "Awaiting CSR Funding"
+
+    class Meta:
+        model = Challenge
+        fields = [
+            'id', 'title', 'category', 'location', 'description', 
+            'evidence', 'status', 'status_display', 'priority', 'report_count',
+            'date_formatted', 'created_at', 'reporter_name', 'reporter_phone', 'reporter_email',
+            'assigned_university', 'proposal_details', 'university_name',
+            'assigned_industry', 'industry_name',
+            'action_logs',
+            'proposal_document', 
+            'resolution_evidence' 
+        ]
+        # REMOVED 'action_logs' FROM HERE SO REACT CAN EDIT THE TIMELINE!
+        read_only_fields = ['priority']
