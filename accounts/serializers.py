@@ -2,6 +2,9 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+# IMPORT THE NEW MODEL HERE
+from challenges.models import SystemSetting
+
 User = get_user_model()
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -53,15 +56,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         role = attrs.get('role', 'CITIZEN')
         
         # SECURITY CHECK: Block unauthorized registrations
-        if role in ['GOVERNMENT_OFFICER', 'ADMIN', 'SUPER_ADMIN']:
+        if role in ['GOVERNMENT_OFFICER', 'ADMIN', 'SYSTEM_ADMIN']:
             secret_code = attrs.get('secret_code', '')
             
-            # Require 'admin123' for System Admins
-            if role in ['ADMIN', 'SUPER_ADMIN'] and secret_code != 'admin123':
+            # Fetch dynamic codes from DB, fallback to defaults if not set yet
+            admin_setting = SystemSetting.objects.filter(key='admin_code').first()
+            admin_code_val = admin_setting.value if admin_setting else 'admin123'
+            
+            gov_setting = SystemSetting.objects.filter(key='gov_code').first()
+            gov_code_val = gov_setting.value if gov_setting else 'gov123'
+            
+            # Require dynamic code for System Admins
+            if role in ['ADMIN', 'SYSTEM_ADMIN'] and secret_code != admin_code_val:
                 raise serializers.ValidationError({"secret_code": ["Invalid System Admin Clearance Code."]})
                 
-            # Require 'gov123' for Government Officials
-            elif role == 'GOVERNMENT_OFFICER' and secret_code != 'gov123':
+            # Require dynamic code for Government Officials
+            elif role == 'GOVERNMENT_OFFICER' and secret_code != gov_code_val:
                 raise serializers.ValidationError({"secret_code": ["Invalid Government Security Code. Unauthorized."]})
                 
         return attrs

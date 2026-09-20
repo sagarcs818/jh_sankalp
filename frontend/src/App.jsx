@@ -6,6 +6,7 @@ import CitizenDashboard from './pages/dashboards/CitizenDashboard';
 import GovernmentDashboard from './pages/dashboards/GovernmentDashboard';
 import UniversityDashboard from './pages/dashboards/UniversityDashboard';
 import IndustryDashboard from './pages/dashboards/IndustryDashboard';
+import AdminDashboard from './pages/dashboards/AdminDashboard';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/government/dashboard" element={<GovernmentDashboard />} />
         <Route path="/university/dashboard" element={<UniversityDashboard />} />
         <Route path="/industry/dashboard" element={<IndustryDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         
         {/* Fallback Dashboard Route */}
         <Route path="/dashboard" element={
