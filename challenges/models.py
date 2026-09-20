@@ -68,3 +68,12 @@ class Challenge(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_status_display()})"
+
+
+class SystemSetting(models.Model):
+    """Stores global system configurations like Signup Security Codes"""
+    key = models.CharField(max_length=50, unique=True)
+    value = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.key}: {self.value}"
