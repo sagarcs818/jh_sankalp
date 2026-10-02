@@ -41,9 +41,20 @@ class User(AbstractUser):
     phone = models.CharField(max_length=15, blank=True, null=True)
     district = models.CharField(max_length=100, blank=True, null=True)
     organization_name = models.CharField(max_length=255, blank=True, null=True)
-    expertise_domain = models.CharField(max_length=255, blank=True, null=True)
-    tech_capabilities = models.TextField(blank=True, null=True)
+    
+    # --- UI & Dashboard Fields ---
+    avatar_or_logo = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    accepting_projects = models.BooleanField(default=True, help_text="Uncheck if University/Industry is currently overloaded")
+
+    # --- AI Matchmaking Fields (Upgraded) ---
+    expertise_domain = models.TextField(blank=True, null=True, help_text="Comma-separated keywords for AI Matching (e.g., Traffic, Water, IoT)")
+    tech_capabilities = models.TextField(blank=True, null=True, help_text="Lab infrastructure or tech stack")
+    
+    # --- Industry / CSR Specific Fields ---
+    preferred_districts = models.CharField(max_length=255, blank=True, null=True, help_text="Comma-separated districts for local CSR matching")
+    csr_budget_pool = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, help_text="Available funding capacity")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'role']
