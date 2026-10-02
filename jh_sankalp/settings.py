@@ -167,9 +167,8 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
 }
 
-# If DEBUG is True (local development), save to local disk
-if DEBUG:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-# If DEBUG is False (Vercel production), save to Cloudinary
-else:
+if os.environ.get('CLOUDINARY_CLOUD_NAME'):
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    # Fallback for local development if you haven't set up the .env keys
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
