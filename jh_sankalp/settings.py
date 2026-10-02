@@ -146,7 +146,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Media files handling for image/video/doc evidence
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+if not DEBUG:
+    MEDIA_ROOT = '/tmp/media'
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Custom Security Codes for Serializers
 ADMIN_DEFAULT_CODE = os.environ.get('ADMIN_DEFAULT_CODE', 'admin123')
