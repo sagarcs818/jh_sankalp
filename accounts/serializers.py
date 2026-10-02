@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.conf import settings
 
 # IMPORT THE NEW MODEL HERE
 from challenges.models import SystemSetting
@@ -61,10 +62,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             
             # Fetch dynamic codes from DB, fallback to defaults if not set yet
             admin_setting = SystemSetting.objects.filter(key='admin_code').first()
-            admin_code_val = admin_setting.value if admin_setting else 'admin123'
+            admin_code_val = admin_setting.value if admin_setting else settings.ADMIN_DEFAULT_CODE
             
             gov_setting = SystemSetting.objects.filter(key='gov_code').first()
-            gov_code_val = gov_setting.value if gov_setting else 'gov123'
+            gov_code_val = gov_setting.value if gov_setting else settings.GOV_DEFAULT_CODE
             
             # Require dynamic code for System Admins
             if role in ['ADMIN', 'SYSTEM_ADMIN'] and secret_code != admin_code_val:
