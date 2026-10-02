@@ -52,7 +52,7 @@ const GovernmentDashboard = () => {
   const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    return `http://127.0.0.1:8000${path}`;
+    return `${import.meta.env.VITE_API_URL}${path}`;
   };
 
   const fetchData = async () => {
@@ -60,10 +60,10 @@ const GovernmentDashboard = () => {
       const token = localStorage.getItem('access_token');
       const headers = { Authorization: `Bearer ${token}` };
 
-      const reportsRes = await axios.get('http://127.0.0.1:8000/api/challenges/reports/', { headers });
+      const reportsRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/reports/`, { headers });
       setChallenges(reportsRes.data);
 
-      const profileRes = await axios.get('http://127.0.0.1:8000/api/auth/profile/', { headers });
+      const profileRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, { headers });
       setProfileData(profileRes.data);
     } catch (error) {
       console.error("Error fetching data", error);
@@ -85,7 +85,7 @@ const GovernmentDashboard = () => {
       setIsLoadingMatches(true);
       try {
         const token = localStorage.getItem('access_token');
-        const res = await axios.get(`http://127.0.0.1:8000/api/challenges/reports/${report.id}/smart_match_universities/`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/reports/${report.id}/smart_match_universities/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUniversityMatches(res.data);
@@ -106,7 +106,7 @@ const GovernmentDashboard = () => {
       const actionLogEntry = `\n[${new Date().toLocaleDateString()}] GOVERNMENT APPROVED: The state has approved ${selectedReport.university_name}'s proposal. Now awaiting Industry CSR funding.`;
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/`,
         { status: 'proposal_submitted', action_logs: (selectedReport.action_logs || '') + actionLogEntry },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -134,7 +134,7 @@ const GovernmentDashboard = () => {
       formData.append('action_logs', (selectedReport.action_logs || '') + actionLogEntry);
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -153,7 +153,7 @@ const GovernmentDashboard = () => {
     try {
       const token = localStorage.getItem('access_token');
       await axios.post(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/assign_university/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/assign_university/`,
         { university_id: univId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -173,7 +173,7 @@ const GovernmentDashboard = () => {
     try {
       const token = localStorage.getItem('access_token');
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -196,7 +196,7 @@ const GovernmentDashboard = () => {
     setProfileMessage({ text: 'Saving...', type: 'info' });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await axios.patch('http://127.0.0.1:8000/api/auth/profile/', profileData, {
+      const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, profileData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfileData(response.data);

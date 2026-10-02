@@ -16,7 +16,7 @@ Built for the **Smart India Hackathon (SIH)**, JH-SANKALP addresses the need for
 
 The **JH-SANKALP Home Page** serves as the central entry point to the platform. It introduces the ecosystem and provides users with a clear overview of how citizens, government bodies, academic institutions, and industry partners can collaborate to address societal challenges.
 
-<img width="1365" height="631" alt="JH-SANKALP Home Page" src="https://github.com/user-attachments/assets/5ba7d2d7-b5b2-4562-bbb6-77942adc3d77" />
+![JH-SANKALP Home Page](https://github.com/user-attachments/assets/5ba7d2d7-b5b2-4562-bbb6-77942adc3d77)
 
 ### Home Page Highlights
 
@@ -35,7 +35,7 @@ The **JH-SANKALP Login Page** provides a secure authentication gateway for all p
 
 Users can access the appropriate dashboard based on their registered role, ensuring that each stakeholder interacts with the features and information relevant to their responsibilities.
 
-<img width="1365" height="631" alt="JH-SANKALP Login Page" src="https://github.com/user-attachments/assets/4e8b479d-649d-49ad-b74f-4a049e02b57e" />
+![JH-SANKALP Login Page](https://github.com/user-attachments/assets/4e8b479d-649d-49ad-b74f-4a049e02b57e)
 
 ### Authentication Highlights
 
@@ -57,7 +57,7 @@ The **Citizen Dashboard** provides citizens with a personalized workspace to par
 
 Citizens can report societal problems, monitor submitted issues, view their current status, and interact with the platform throughout the resolution lifecycle.
 
-<img width="1365" height="631" alt="Citizen Dashboard" src="https://github.com/user-attachments/assets/62ac0979-c6c5-4b60-ac8d-0c4b31f4d522" />
+![Citizen Dashboard](https://github.com/user-attachments/assets/62ac0979-c6c5-4b60-ac8d-0c4b31f4d522)
 
 ### Citizen Dashboard Highlights
 
@@ -77,7 +77,7 @@ The **Citizen Problem Tracking** interface allows citizens to monitor the progre
 
 This creates transparency by allowing citizens to follow the lifecycle of a problem from initial reporting through government assessment and resolution.
 
-<img width="1365" height="631" alt="Citizen Problem Tracking" src="https://github.com/user-attachments/assets/99b19c03-d3dc-469f-8107-fbe4b7a827ae" />
+![Citizen Problem Tracking](https://github.com/user-attachments/assets/99b19c03-d3dc-469f-8107-fbe4b7a827ae)
 
 ### Tracking Capabilities
 
@@ -98,7 +98,7 @@ The **Government Dashboard** acts as the central command center for government o
 
 It provides an overview of reported societal problems, priorities, project activities, and resolution progress, enabling officials to manage challenges from a unified interface.
 
-<img width="1365" height="631" alt="Government Dashboard" src="https://github.com/user-attachments/assets/55297d05-9c33-4bff-bbdf-1dcd306ab4c3" />
+![Government Dashboard](https://github.com/user-attachments/assets/55297d05-9c33-4bff-bbdf-1dcd306ab4c3)
 
 ### Government Dashboard Highlights
 
@@ -115,7 +115,7 @@ It provides an overview of reported societal problems, priorities, project activ
 
 The **Government Track View Details** feature allows government officials to inspect individual citizen-reported problems, review their details, and perform **priority-based triage**.
 
-<img width="1365" height="631" alt="Government Track View Details - Triage Feature" src="https://github.com/user-attachments/assets/d927904e-0e9b-40bb-b7e0-8803e63b4959" />
+![Government Track View Details - Triage Feature](https://github.com/user-attachments/assets/d927904e-0e9b-40bb-b7e0-8803e63b4959)
 
 ### Triage Capabilities
 
@@ -137,7 +137,7 @@ The **Government GIS Command Center** provides a geographical view of reported s
 
 Using interactive maps, government officials can identify the geographical distribution of incidents and understand areas containing higher concentrations of reported issues.
 
-<img width="1365" height="631" alt="Government GIS Command Center" src="https://github.com/user-attachments/assets/498b9a10-eca5-4621-9737-de3c7ecc86e4" />
+![Government GIS Command Center](https://github.com/user-attachments/assets/498b9a10-eca5-4621-9737-de3c7ecc86e4)
 
 ### GIS Capabilities
 
@@ -156,7 +156,7 @@ The **Government Analytics Dashboard** provides data-driven insights into societ
 
 Officials can use visual analytics to understand issue categories, priorities, geographical patterns, and project resolution progress.
 
-<img width="1365" height="631" alt="Government Analytics Dashboard" src="https://github.com/user-attachments/assets/b061ceaf-6155-4d69-887d-6f9eb658c68d" />
+![Government Analytics Dashboard](https://github.com/user-attachments/assets/b061ceaf-6155-4d69-887d-6f9eb658c68d)
 
 ### Analytics Capabilities
 
@@ -177,11 +177,13 @@ The **University Dashboard** connects academic institutions with real-world soci
 
 Universities can showcase their expertise and infrastructure, discover suitable challenges, and participate in projects where their academic capabilities can contribute to solving societal problems.
 
-<img width="1365" height="631" alt="University Dashboard" src="https://github.com/user-attachments/assets/94721615-9651-4023-998c-ceb79f7b665d" />
+![University Dashboard](https://github.com/user-attachments/assets/94721615-9651-4023-998c-ceb79f7b665d)
 
 ### 🤖 AI Smart Match — University Domain Keywords
 
 The platform utilizes **domain keywords** as matching signals to intelligently connect universities with incoming societal challenges.
+
+![University Domain Keywords for AI Smart Match](https://github.com/user-attachments/assets/43563428-a902-4b30-83d0-c34a8d1c3f4b)
 
 Universities can define keywords representing their:
 
@@ -190,8 +192,6 @@ Universities can define keywords representing their:
 * 💻 Technical domains
 * 🏫 Institutional strengths
 * 🔬 Research capabilities
-
-<img width="1365" height="631" alt="University Domain Keywords for AI Smart Match" src="https://github.com/user-attachments/assets/43563428-a902-4b30-83d0-c34a8d1c3f4b" />
 
 These domain keywords help the AI Smart Match process identify challenges that align with the university's available expertise and infrastructure.
 
@@ -214,15 +214,15 @@ These domain keywords help the AI Smart Match process identify challenges that a
 
 The **Industry & CSR Dashboard** enables companies and CSR partners to participate in societal projects that align with their expertise, funding capabilities, and social impact objectives.
 
-<img width="1365" height="631" alt="Industry and CSR Dashboard" src="https://github.com/user-attachments/assets/30311014-27a3-438b-a9aa-6b51de708cc0" />
+![Industry and CSR Dashboard](https://github.com/user-attachments/assets/30311014-27a3-438b-a9aa-6b51de708cc0)
 
 ### 🤖 AI Smart Match — Industry / CSR Domain Keywords
 
 Industry and CSR partners can define **domain keywords** representing their business expertise, CSR focus areas, technical capabilities, and funding interests.
 
-These keywords are used as matching signals for discovering societal projects that align with the organization's capabilities and CSR objectives.
+![Industry Domain Keywords for AI Smart Match](https://github.com/user-attachments/assets/e3e4f57d-0daf-473a-9557-e504479d24b4)
 
-<img width="1348" height="630" alt="Industry Domain Keywords for AI Smart Match" src="https://github.com/user-attachments/assets/e3e4f57d-0daf-473a-9557-e504479d24b4" />
+These keywords are used as matching signals for discovering societal projects that align with the organization's capabilities and CSR objectives.
 
 Industry / CSR partners can configure preferences such as:
 
@@ -255,7 +255,7 @@ The **System Admin Dashboard** provides centralized control over the JH-SANKALP 
 
 Administrators can monitor ecosystem activity, manage platform operations, review system-level analytics, and configure security-related settings.
 
-<img width="1365" height="631" alt="System Admin Dashboard" src="https://github.com/user-attachments/assets/f5d0fe15-2ce7-432f-a68d-2637852ac703" />
+![System Admin Dashboard](https://github.com/user-attachments/assets/f5d0fe15-2ce7-432f-a68d-2637852ac703)
 
 ### Admin Dashboard Highlights
 
@@ -274,7 +274,7 @@ The **User Management** interface enables system administrators to manage users 
 
 Administrators can monitor registered users and manage access according to their assigned roles and responsibilities.
 
-<img width="1365" height="631" alt="Admin User Management" src="https://github.com/user-attachments/assets/ffc95962-c5ad-47c7-888b-ddf0c10b4525" />
+![Admin User Management](https://github.com/user-attachments/assets/ffc95962-c5ad-47c7-888b-ddf0c10b4525)
 
 ### User Management Capabilities
 
@@ -293,7 +293,7 @@ The **System Logs** interface provides administrators with visibility into impor
 
 These logs support platform monitoring, operational tracking, and administrative oversight.
 
-<img width="1365" height="631" alt="Admin System Logs" src="https://github.com/user-attachments/assets/d878ed15-a1ae-4c7a-87d6-879c84a81bb8" />
+![Admin System Logs](https://github.com/user-attachments/assets/d878ed15-a1ae-4c7a-87d6-879c84a81bb8)
 
 ### System Log Capabilities
 
@@ -440,23 +440,23 @@ Industry and CSR partners can participate in the ecosystem by supporting suitabl
               └────────────────────┼───────────────────┘
                                    │
                                    ▼
-                           ┌─────────────────┐
-                           │   React / Vite  │
-                           │    Frontend     │
-                           └────────┬────────┘
-                                    │
-                                  REST API
-                                    │
-                                    ▼
-                           ┌─────────────────┐
-                           │   Django + DRF  │
-                           │     Backend     │
-                           └────────┬────────┘
-                                    │
-                                    ▼
-                           ┌─────────────────┐
-                           │   PostgreSQL    │
-                           └─────────────────┘
+                          ┌─────────────────┐
+                          │   React / Vite  │
+                          │    Frontend     │
+                          └────────┬────────┘
+                                   │
+                                REST API
+                                   │
+                                   ▼
+                          ┌─────────────────┐
+                          │   Django + DRF  │
+                          │     Backend     │
+                          └────────┬────────┘
+                                   │
+                                   ▼
+                          ┌─────────────────┐
+                          │   PostgreSQL    │
+                          └─────────────────┘
 ```
 
 ---
@@ -492,32 +492,34 @@ Industry and CSR partners can participate in the ecosystem by supporting suitabl
 ```text
 jh_sankalp/
 │
-├── backend/                      # Django REST API Backend
-│   ├── accounts/                 # Custom User models (Citizen, Univ, CSR, Gov)
-│   ├── ai_engine/                # AI matchmaking logic & keyword analysis
-│   ├── analytics/                # Data processing for frontend charts
-│   ├── challenges/               # Core CRUD for societal issues & GIS data
-│   ├── industries/               # Industry & CSR partner management
-│   ├── projects/                 # Project lifecycle tracking
-│   ├── universities/             # Academic profiles & proposals
-│   ├── jh_sankalp/               # Main Django settings & URL routing
-│   ├── media/                    # Uploaded files & evidence
-│   ├── manage.py                 # Django management script
-│   └── requirements.txt          # Python dependencies
+├── accounts/                     # Django App: Custom User models
+├── ai_engine/                    # Django App: AI matchmaking & keyword analysis
+├── analytics/                    # Django App: Data processing for frontend charts
+├── challenges/                   # Django App: Societal issues & GIS data
+├── industries/                   # Django App: Industry & CSR partner management
+├── projects/                     # Django App: Project lifecycle tracking
+├── universities/                 # Django App: Academic profiles & proposals
+├── jh_sankalp/                   # Main Django settings & URL routing
+├── media/                        # Uploaded files & evidence
 │
 ├── frontend/                     # React + Vite Frontend
 │   ├── src/
 │   │   ├── assets/               # Images and SVGs
 │   │   ├── components/           # Reusable UI elements
-│   │   ├── pages/                # Dashboards (Citizen, Gov, Univ, CSR, Admin)
+│   │   ├── pages/                # Dashboards
 │   │   ├── App.jsx               # Main React router
 │   │   └── main.jsx              # React entry point
+│   │
 │   ├── public/                   # Static assets
 │   ├── package.json              # Node dependencies
 │   ├── tailwind.config.js        # Tailwind CSS configuration
-│   └── vite.config.js            # Vite bundler configuration
+│   ├── vite.config.js            # Vite bundler configuration
+│   └── .env                      # Vite environment variables
 │
-├── .env                          # PostgreSQL & JWT Secrets (Git ignored)
+├── manage.py                     # Django management script
+├── requirements.txt              # Python dependencies
+├── vercel.json                   # Vercel deployment configuration
+├── .env                          # Root backend environment variables
 ├── .gitignore                    # Git ignore rules
 └── README.md                     # Project documentation
 ```
@@ -538,7 +540,7 @@ Make sure the following software is installed:
 
 ---
 
-# 1️⃣ Clone the Repository
+## 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/sagarcs818/jh_sankalp.git
@@ -547,11 +549,15 @@ cd jh_sankalp
 
 ---
 
-# 2️⃣ Configure Environment Variables (`.env`)
+## 2️⃣ Configure Environment Variables
 
-Create a `.env` file in the root directory.
+You will need to configure environment variables for both the backend (**Django**) and frontend (**Vite + React**).
 
-> ⚠️ **Important:** Do not commit your `.env` file to Git.
+> ⚠️ **Important:** Do not commit your `.env` files to Git.
+
+### Backend Configuration (`jh_sankalp/.env`)
+
+Create a `.env` file in the root directory:
 
 ```env
 # Core Django Settings
@@ -559,22 +565,30 @@ SECRET_KEY=your_super_secret_key_here
 DEBUG=True
 
 # Database Configuration (Using dj-database-url)
-# We use a single DATABASE_URL string that works for both local and cloud databases.
-# Replace YOUR_DB_USER and YOUR_DB_PASSWORD with your local PostgreSQL credentials.
-DATABASE_URL=postgres://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/jh_sankalp_db
+# Replace YOUR_DB_USER, YOUR_DB_PASSWORD, and YOUR_DB_NAME
+# with your local PostgreSQL credentials.
+DATABASE_URL=postgres://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/YOUR_DB_NAME
 
 # Hybrid Security Clearance Codes
 GOV_CLEARANCE_CODE=gov123
 ADMIN_CLEARANCE_CODE=admin123
 ```
 
+### Frontend Configuration (`jh_sankalp/frontend/.env`)
+
+Create a second `.env` file inside the `frontend` directory:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
 ---
 
-# 3️⃣ Backend Setup — Django
+## 3️⃣ Backend Setup — Django
 
-Open your terminal and run the following commands.
+Open your terminal and run the following commands from the project root.
 
-## Create and Activate Virtual Environment
+### Create Virtual Environment
 
 ```bash
 python -m venv venv
@@ -592,20 +606,20 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-## Install Dependencies
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Run Migrations
+### Run Migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-## Start the Django Server
+### Start Django Server
 
 ```bash
 python manage.py runserver
@@ -615,7 +629,7 @@ python manage.py runserver
 
 ---
 
-# 4️⃣ Frontend Setup — React / Vite
+## 4️⃣ Frontend Setup — React / Vite
 
 Open a **new terminal window** and keep the Django backend running.
 
@@ -625,13 +639,13 @@ Navigate to the frontend directory:
 cd frontend
 ```
 
-Install Node dependencies:
+### Install Node Dependencies
 
 ```bash
 npm install
 ```
 
-Start the development server:
+### Start Development Server
 
 ```bash
 npm run dev

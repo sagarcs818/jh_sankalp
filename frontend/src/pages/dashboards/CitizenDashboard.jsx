@@ -137,7 +137,7 @@ const CitizenDashboard = () => {
   const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    return `http://127.0.0.1:8000${path}`;
+    return `${import.meta.env.VITE_API_URL}${path}`;
   };
 
   useEffect(() => {
@@ -146,10 +146,10 @@ const CitizenDashboard = () => {
         const token = localStorage.getItem('access_token');
         const headers = { Authorization: `Bearer ${token}` };
 
-        const reportsRes = await axios.get('http://127.0.0.1:8000/api/challenges/reports/', { headers });
+        const reportsRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/reports/`, { headers });
         setReports(reportsRes.data);
 
-        const profileRes = await axios.get('http://127.0.0.1:8000/api/auth/profile/', { headers });
+        const profileRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, { headers });
         setProfileData(profileRes.data);
 
       } catch (error) {
@@ -167,7 +167,7 @@ const CitizenDashboard = () => {
     setProfileMessage({ text: 'Saving...', type: 'info' });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await axios.patch('http://127.0.0.1:8000/api/auth/profile/', profileData, {
+      const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, profileData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfileData(response.data);
@@ -278,12 +278,12 @@ const CitizenDashboard = () => {
       
       let response;
       if (editingId) {
-        response = await axios.patch(`http://127.0.0.1:8000/api/challenges/reports/${editingId}/`, submitData, {
+        response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/challenges/reports/${editingId}/`, submitData, {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
         });
         setReports(myReports.map(r => r.id === editingId ? response.data : r));
       } else {
-        response = await axios.post('http://127.0.0.1:8000/api/challenges/reports/', submitData, {
+        response = await axios.post(`${import.meta.env.VITE_API_URL}/api/challenges/reports/`, submitData, {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
         });
         setReports([response.data, ...myReports]);
@@ -303,7 +303,7 @@ const CitizenDashboard = () => {
     if (!reportToDelete) return;
     try {
       const token = localStorage.getItem('access_token');
-      await axios.delete(`http://127.0.0.1:8000/api/challenges/reports/${reportToDelete.id}/`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/challenges/reports/${reportToDelete.id}/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReports(myReports.filter(r => r.id !== reportToDelete.id));

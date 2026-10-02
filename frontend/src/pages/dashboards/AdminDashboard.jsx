@@ -51,13 +51,13 @@ const AdminDashboard = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       if (activeTab === 'overview') {
-        const response = await axios.get('http://127.0.0.1:8000/api/challenges/admin-stats/ecosystem_stats/', { headers });
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/ecosystem_stats/`, { headers });
         setStats(response.data);
       } else if (activeTab === 'users') {
-        const response = await axios.get('http://127.0.0.1:8000/api/challenges/admin-stats/all_users/', { headers });
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/all_users/`, { headers });
         setUsersList(response.data);
       } else if (activeTab === 'logs') {
-        const response = await axios.get('http://127.0.0.1:8000/api/challenges/admin-stats/system_logs/', { headers });
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/system_logs/`, { headers });
         setSystemLogs(response.data.logs || []);
       }
     } catch (error) {
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
     setIsUpdating(true);
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post('http://127.0.0.1:8000/api/challenges/admin-stats/update_user_password/', 
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/update_user_password/`, 
         { user_id: targetUser.id, new_password: newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -114,7 +114,7 @@ const AdminDashboard = () => {
     setIsUpdating(true);
     try {
       const token = localStorage.getItem('access_token');
-      await axios.delete('http://127.0.0.1:8000/api/challenges/admin-stats/delete_user/', {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/delete_user/`, {
         headers: { Authorization: `Bearer ${token}` },
         data: { user_id: userToDelete.id }
       });
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
     setSecurityModalOpen(true);
     try {
       const token = localStorage.getItem('access_token');
-      const res = await axios.get('http://127.0.0.1:8000/api/challenges/admin-stats/security_codes/', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/security_codes/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSecurityCodes(res.data);
@@ -148,7 +148,7 @@ const AdminDashboard = () => {
     setIsUpdating(true);
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post('http://127.0.0.1:8000/api/challenges/admin-stats/security_codes/', 
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/challenges/admin-stats/security_codes/`, 
         securityCodes,
         { headers: { Authorization: `Bearer ${token}` } }
       );
