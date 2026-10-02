@@ -17,6 +17,11 @@ class ChallengeSerializer(serializers.ModelSerializer):
     # ADD THIS NEW FIELD:
     industry_name = serializers.SerializerMethodField()
 
+    # FIX: Force absolute URLs for all file fields
+    evidence = serializers.SerializerMethodField()
+    proposal_document = serializers.SerializerMethodField()
+    resolution_evidence = serializers.SerializerMethodField()
+
     class Meta:
         model = Challenge
         fields = [
@@ -26,10 +31,11 @@ class ChallengeSerializer(serializers.ModelSerializer):
             'assigned_university', 'proposal_details', 'university_name',
             'assigned_industry', 'industry_name',
             'action_logs',
-            'proposal_document', # <-- ADD THIS! (University pitch deck)
-            'resolution_evidence' # <-- ADD THIS! (University final deployment proof)
+            'proposal_document', 
+            'resolution_evidence' 
         ]
-        read_only_fields = ['priority', 'action_logs']
+        # REMOVED 'action_logs' FROM HERE SO REACT CAN EDIT THE TIMELINE!
+        read_only_fields = ['priority']
 
     # Helper methods to safely extract the user data
     def get_reporter_name(self, obj):
@@ -58,17 +64,18 @@ class ChallengeSerializer(serializers.ModelSerializer):
             return obj.assigned_industry.organization_name
         return "Awaiting CSR Funding"
 
-    class Meta:
-        model = Challenge
-        fields = [
-            'id', 'title', 'category', 'location', 'description', 
-            'evidence', 'status', 'status_display', 'priority', 'report_count',
-            'date_formatted', 'created_at', 'reporter_name', 'reporter_phone', 'reporter_email',
-            'assigned_university', 'proposal_details', 'university_name',
-            'assigned_industry', 'industry_name',
-            'action_logs',
-            'proposal_document', 
-            'resolution_evidence' 
-        ]
-        # REMOVED 'action_logs' FROM HERE SO REACT CAN EDIT THE TIMELINE!
-        read_only_fields = ['priority']
+    # FIX: Helper methods to return the full Cloudinary URLs
+    def get_evidence(self, obj):
+        if obj.evidence:
+            return obj.evidence.url
+        return None
+
+    def get_proposal_document(self, obj):
+        if obj.proposal_document:
+            return obj.proposal_document.url
+        return None
+
+    def get_resolution_evidence(self, obj):
+        if obj.resolution_evidence:
+            return obj.resolution_evidence.url
+        return None
