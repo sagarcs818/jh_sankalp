@@ -45,10 +45,10 @@ const UniversityDashboard = () => {
         const token = localStorage.getItem('access_token');
         const headers = { Authorization: `Bearer ${token}` };
 
-        const profileRes = await axios.get('http://127.0.0.1:8000/api/auth/profile/', { headers });
+        const profileRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, { headers });
         setUserProfile(profileRes.data);
 
-        const reportsRes = await axios.get('http://127.0.0.1:8000/api/challenges/reports/', { headers });
+        const reportsRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/reports/`, { headers });
         setChallenges(reportsRes.data);
 
       } catch (error) {
@@ -72,7 +72,7 @@ const UniversityDashboard = () => {
     setProfileMessage({ text: 'Saving...', type: 'info' });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await axios.patch('http://127.0.0.1:8000/api/auth/profile/', userProfile, {
+      const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, userProfile, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUserProfile(response.data);
@@ -124,7 +124,7 @@ const UniversityDashboard = () => {
       }
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/`,
         formData,
         { 
           headers: { 
@@ -177,7 +177,7 @@ const UniversityDashboard = () => {
       formData.append('action_logs', (proposalToWithdraw.action_logs || '') + actionLogEntry);
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${proposalToWithdraw.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${proposalToWithdraw.id}/`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -214,7 +214,7 @@ const UniversityDashboard = () => {
       }
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/`,
         formData,
         { 
           headers: { 

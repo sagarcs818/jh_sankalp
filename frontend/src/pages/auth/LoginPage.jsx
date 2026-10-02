@@ -41,7 +41,7 @@ const LoginPage = () => {
     try {
       if (isLogin) {
         // --- LOGIN FLOW ---
-        const response = await axios.post('http://127.0.0.1:8000/api/auth/login/', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login/`, {
           email: formData.email,
           password: formData.password
         });
@@ -70,7 +70,7 @@ const LoginPage = () => {
             submitData.last_name = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'Hub';
         }
 
-        await axios.post('http://127.0.0.1:8000/api/auth/register/', submitData);
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register/`, submitData);
         setSuccessMsg('Account created successfully! Please sign in with your new credentials.');
         setIsLogin(true);
         setFormData({ ...formData, password: '', secret_code: '' });

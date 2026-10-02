@@ -42,11 +42,11 @@ const IndustryDashboard = () => {
         const token = localStorage.getItem('access_token');
         const headers = { Authorization: `Bearer ${token}` };
 
-        const profileRes = await axios.get('http://127.0.0.1:8000/api/auth/profile/', { headers });
+        const profileRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, { headers });
         setUserProfile(profileRes.data);
 
         // Fetching reports
-        const reportsRes = await axios.get('http://127.0.0.1:8000/api/challenges/reports/', { headers });
+        const reportsRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/challenges/reports/`, { headers });
         setChallenges(reportsRes.data);
 
       } catch (error) {
@@ -70,7 +70,7 @@ const IndustryDashboard = () => {
     setProfileMessage({ text: 'Saving...', type: 'info' });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await axios.patch('http://127.0.0.1:8000/api/auth/profile/', userProfile, {
+      const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, userProfile, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUserProfile(response.data);
@@ -96,7 +96,7 @@ const IndustryDashboard = () => {
       const actionLogEntry = `\n[${new Date().toLocaleDateString()}] INDUSTRY FUNDING APPROVED: ${userProfile.organization_name} allocated ₹${Number(fundingAmount).toLocaleString('en-IN')} for this project. Notes: ${mentorshipNotes || 'None'}`;
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${selectedReport.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${selectedReport.id}/`,
         { 
             status: 'in_progress', 
             assigned_industry: userProfile.id,
@@ -125,7 +125,7 @@ const IndustryDashboard = () => {
       const actionLogEntry = `\n[${new Date().toLocaleDateString()}] CSR FUNDING RETRACTED: ${userProfile.organization_name} has officially withdrawn their funding. The R&D proposal is open for new sponsors.`;
 
       const response = await axios.patch(
-        `http://127.0.0.1:8000/api/challenges/reports/${investmentToWithdraw.id}/`,
+        `${import.meta.env.VITE_API_URL}/api/challenges/reports/${investmentToWithdraw.id}/`,
         { 
             status: 'proposal_submitted', 
             assigned_industry: null,      
@@ -173,7 +173,7 @@ const IndustryDashboard = () => {
   const getMediaUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    return `http://127.0.0.1:8000${path}`;
+    return `${import.meta.env.VITE_API_URL}${path}`;
   };
 
   const NavLinks = () => (
