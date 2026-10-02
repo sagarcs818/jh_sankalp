@@ -2,7 +2,7 @@
 
 ### Smart India Hackathon | Smart Societal Challenge & Project Lifecycle Management Ecosystem
 
-**JH-SANKALP** is an enterprise-grade, full-stack collaboration platform designed to connect **Citizens, Government Departments, Academic Institutions, and Industry CSR Partners** on a unified ecosystem.
+**JH-SANKALP** is an enterprise-grade, full-stack collaboration platform designed to connect **Citizens, Government Departments, Academic Institutions, and Industry & CSR Partners** on a unified ecosystem.
 
 The platform enables stakeholders to **report, track, analyze, prioritize, match, and resolve societal challenges** efficiently throughout the complete project lifecycle.
 
@@ -16,9 +16,7 @@ Built for the **Smart India Hackathon (SIH)**, JH-SANKALP addresses the need for
 
 The **JH-SANKALP Home Page** serves as the central entry point to the platform. It introduces the ecosystem and provides users with a clear overview of how citizens, government bodies, academic institutions, and industry partners can collaborate to address societal challenges.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/5ba7d2d7-b5b2-4562-bbb6-77942adc3d77" alt="JH-SANKALP Home Page" width="100%">
-</p>
+<img width="1365" height="631" alt="JH-SANKALP Home Page" src="https://github.com/user-attachments/assets/5ba7d2d7-b5b2-4562-bbb6-77942adc3d77" />
 
 ### Home Page Highlights
 
@@ -37,9 +35,7 @@ The **JH-SANKALP Login Page** provides a secure authentication gateway for all p
 
 Users can access the appropriate dashboard based on their registered role, ensuring that each stakeholder interacts with the features and information relevant to their responsibilities.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/4e8b479d-649d-49ad-b74f-4a049e02b57e" alt="JH-SANKALP Login Page" width="100%">
-</p>
+<img width="1365" height="631" alt="JH-SANKALP Login Page" src="https://github.com/user-attachments/assets/4e8b479d-649d-49ad-b74f-4a049e02b57e" />
 
 ### Authentication Highlights
 
@@ -61,9 +57,7 @@ The **Citizen Dashboard** provides citizens with a personalized workspace to par
 
 Citizens can report societal problems, monitor submitted issues, view their current status, and interact with the platform throughout the resolution lifecycle.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/62ac0979-c6c5-4b60-ac8d-0c4b31f4d522" alt="Citizen Dashboard" width="100%">
-</p>
+<img width="1365" height="631" alt="Citizen Dashboard" src="https://github.com/user-attachments/assets/62ac0979-c6c5-4b60-ac8d-0c4b31f4d522" />
 
 ### Citizen Dashboard Highlights
 
@@ -83,9 +77,7 @@ The **Citizen Problem Tracking** interface allows citizens to monitor the progre
 
 This creates transparency by allowing citizens to follow the lifecycle of a problem from initial reporting through government assessment and resolution.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/99b19c03-d3dc-469f-8107-fbe4b7a827ae" alt="Citizen Problem Tracking" width="70%">
-</p>
+<img width="1365" height="631" alt="Citizen Problem Tracking" src="https://github.com/user-attachments/assets/99b19c03-d3dc-469f-8107-fbe4b7a827ae" />
 
 ### Tracking Capabilities
 
@@ -106,9 +98,7 @@ The **Government Dashboard** acts as the central command center for government o
 
 It provides an overview of reported societal problems, priorities, project activities, and resolution progress, enabling officials to manage challenges from a unified interface.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/55297d05-9c33-4bff-bbdf-1dcd306ab4c3" alt="Government Dashboard" width="100%">
-</p>
+<img width="1365" height="631" alt="Government Dashboard" src="https://github.com/user-attachments/assets/55297d05-9c33-4bff-bbdf-1dcd306ab4c3" />
 
 ### Government Dashboard Highlights
 
@@ -125,9 +115,7 @@ It provides an overview of reported societal problems, priorities, project activ
 
 The **Government Track View Details** feature allows government officials to inspect individual citizen-reported problems, review their details, and perform **priority-based triage**.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/d927904e-0e9b-40bb-b7e0-8803e63b4959" alt="Government Track View Details - Triage Feature" width="80%">
-</p>
+<img width="1365" height="631" alt="Government Track View Details - Triage Feature" src="https://github.com/user-attachments/assets/d927904e-0e9b-40bb-b7e0-8803e63b4959" />
 
 ### Triage Capabilities
 
@@ -149,9 +137,7 @@ The **Government GIS Command Center** provides a geographical view of reported s
 
 Using interactive maps, government officials can identify the geographical distribution of incidents and understand areas containing higher concentrations of reported issues.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/498b9a10-eca5-4621-9737-de3c7ecc86e4" alt="Government GIS Command Center" width="100%">
-</p>
+<img width="1365" height="631" alt="Government GIS Command Center" src="https://github.com/user-attachments/assets/498b9a10-eca5-4621-9737-de3c7ecc86e4" />
 
 ### GIS Capabilities
 
@@ -170,9 +156,7 @@ The **Government Analytics Dashboard** provides data-driven insights into societ
 
 Officials can use visual analytics to understand issue categories, priorities, geographical patterns, and project resolution progress.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/b061ceaf-6155-4d69-887d-6f9eb658c68d" alt="Government Analytics Dashboard" width="100%">
-</p>
+<img width="1365" height="631" alt="Government Analytics Dashboard" src="https://github.com/user-attachments/assets/b061ceaf-6155-4d69-887d-6f9eb658c68d" />
 
 ### Analytics Capabilities
 
@@ -193,15 +177,30 @@ The **University Dashboard** connects academic institutions with real-world soci
 
 Universities can showcase their expertise and infrastructure, discover suitable challenges, and participate in projects where their academic capabilities can contribute to solving societal problems.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/94721615-9651-4023-998c-ceb79f7b665d" alt="University Dashboard" width="100%">
-</p>
+<img width="1365" height="631" alt="University Dashboard" src="https://github.com/user-attachments/assets/94721615-9651-4023-998c-ceb79f7b665d" />
+
+### 🤖 AI Smart Match — University Domain Keywords
+
+The platform utilizes **domain keywords** as matching signals to intelligently connect universities with incoming societal challenges.
+
+Universities can define keywords representing their:
+
+* 🎯 Academic expertise
+* 🧪 Laboratory capabilities
+* 💻 Technical domains
+* 🏫 Institutional strengths
+* 🔬 Research capabilities
+
+<img width="1365" height="631" alt="University Domain Keywords for AI Smart Match" src="https://github.com/user-attachments/assets/43563428-a902-4b30-83d0-c34a8d1c3f4b" />
+
+These domain keywords help the AI Smart Match process identify challenges that align with the university's available expertise and infrastructure.
 
 ### University Dashboard Highlights
 
 * 🏫 Institutional profile management
 * 🧪 Laboratory infrastructure
 * 🎯 Domain expertise
+* 🔑 Domain keyword configuration
 * 🔎 Challenge discovery
 * 🤖 Smart challenge matching
 * 🤝 Project collaboration
@@ -215,14 +214,31 @@ Universities can showcase their expertise and infrastructure, discover suitable 
 
 The **Industry & CSR Dashboard** enables companies and CSR partners to participate in societal projects that align with their expertise, funding capabilities, and social impact objectives.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/30311014-27a3-438b-a9aa-6b51de708cc0" alt="Industry and CSR Dashboard" width="100%">
-</p>
+<img width="1365" height="631" alt="Industry and CSR Dashboard" src="https://github.com/user-attachments/assets/30311014-27a3-438b-a9aa-6b51de708cc0" />
+
+### 🤖 AI Smart Match — Industry / CSR Domain Keywords
+
+Industry and CSR partners can define **domain keywords** representing their business expertise, CSR focus areas, technical capabilities, and funding interests.
+
+These keywords are used as matching signals for discovering societal projects that align with the organization's capabilities and CSR objectives.
+
+<img width="1348" height="630" alt="Industry Domain Keywords for AI Smart Match" src="https://github.com/user-attachments/assets/e3e4f57d-0daf-473a-9557-e504479d24b4" />
+
+Industry / CSR partners can configure preferences such as:
+
+* 🏢 Business expertise
+* 🌱 CSR focus areas
+* 🛠️ Technical capabilities
+* 💰 Funding interests
+* 📍 Preferred districts
+* 🎯 Project domains
 
 ### Industry & CSR Capabilities
 
 * 🏢 CSR partner profile
+* 🔑 Domain keyword configuration
 * 🔎 Discover suitable projects
+* 🤖 AI-assisted project matching
 * 💰 CSR funding opportunities
 * 🛠️ Technical support
 * 👨‍💻 Industry expertise
@@ -239,9 +255,7 @@ The **System Admin Dashboard** provides centralized control over the JH-SANKALP 
 
 Administrators can monitor ecosystem activity, manage platform operations, review system-level analytics, and configure security-related settings.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/f5d0fe15-2ce7-432f-a68d-2637852ac703" alt="System Admin Dashboard" width="100%">
-</p>
+<img width="1365" height="631" alt="System Admin Dashboard" src="https://github.com/user-attachments/assets/f5d0fe15-2ce7-432f-a68d-2637852ac703" />
 
 ### Admin Dashboard Highlights
 
@@ -260,9 +274,7 @@ The **User Management** interface enables system administrators to manage users 
 
 Administrators can monitor registered users and manage access according to their assigned roles and responsibilities.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/ffc95962-c5ad-47c7-888b-ddf0c10b4525" alt="Admin User Management" width="100%">
-</p>
+<img width="1365" height="631" alt="Admin User Management" src="https://github.com/user-attachments/assets/ffc95962-c5ad-47c7-888b-ddf0c10b4525" />
 
 ### User Management Capabilities
 
@@ -281,9 +293,7 @@ The **System Logs** interface provides administrators with visibility into impor
 
 These logs support platform monitoring, operational tracking, and administrative oversight.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/d878ed15-a1ae-4c7a-87d6-879c84a81bb8" alt="Admin System Logs" width="100%">
-</p>
+<img width="1365" height="631" alt="Admin System Logs" src="https://github.com/user-attachments/assets/d878ed15-a1ae-4c7a-87d6-879c84a81bb8" />
 
 ### System Log Capabilities
 
@@ -315,7 +325,7 @@ Each role receives access to features and information relevant to their responsi
 
 An interactive geospatial command center powered by **Leaflet and OpenStreetMap**.
 
-Key capabilities include:
+### Key Capabilities
 
 * 📍 Location-based societal issue reporting
 * 🗺️ Interactive incident visualization
@@ -330,7 +340,7 @@ Key capabilities include:
 
 Incoming citizen reports can be categorized according to their urgency and importance.
 
-Priority levels include:
+### Priority Levels
 
 * 🔴 **Critical**
 * 🟠 **High**
@@ -340,11 +350,42 @@ The triage system helps government officials quickly identify and manage importa
 
 ---
 
+## 🧠 AI-Powered Domain Matching
+
+JH-SANKALP uses **domain keywords** as matching signals to connect societal challenges with relevant academic and industry capabilities.
+
+### 🎓 University Matching
+
+University profiles can contain domain keywords representing:
+
+* 🎯 Academic expertise
+* 🧪 Laboratory infrastructure
+* 🔬 Research capabilities
+* 💻 Technical domains
+* 🏫 Institutional strengths
+
+These keywords help identify challenges that align with a university's capabilities.
+
+### 🏢 Industry / CSR Matching
+
+Industry and CSR profiles can contain domain keywords representing:
+
+* 🏢 Business expertise
+* 🌱 CSR focus areas
+* 🛠️ Technical capabilities
+* 💰 Funding interests
+* 📍 Preferred districts
+* 🎯 Project domains
+
+These keywords support discovery of projects aligned with industry and CSR capabilities.
+
+---
+
 ## 📊 Visual Analytics Engine
 
-Interactive dashboards using **Recharts** provide real-time insights into project and issue management.
+Interactive dashboards using **Recharts** provide insights into project and issue management.
 
-Analytics include:
+### Analytics Include
 
 * 📈 Project resolution funnels
 * 📊 Category-wise issue distribution
@@ -364,6 +405,7 @@ The matching process considers:
 * 🎯 Domain expertise
 * 🏫 Institutional capabilities
 * 💡 Technical requirements of the challenge
+* 🔑 University domain keywords
 
 ---
 
@@ -374,6 +416,8 @@ Industry and CSR partners can participate in the ecosystem by supporting suitabl
 * 💰 CSR funding
 * 🛠️ Technical support
 * 👨‍💻 Industry expertise
+* 🔑 Domain keyword matching
+* 📍 District preferences
 * 🌱 Social impact participation
 
 ---
@@ -381,38 +425,38 @@ Industry and CSR partners can participate in the ecosystem by supporting suitabl
 # 🏗️ System Architecture
 
 ```text
-                    ┌──────────────────────────┐
-                    │        JH-SANKALP        │
-                    │  Collaboration Platform  │
-                    └────────────┬─────────────┘
-                                 │
-             ┌───────────────────┼───────────────────┐
-             │                   │                   │
-             ▼                   ▼                   ▼
-       ┌───────────┐       ┌────────────┐      ┌────────────┐
-       │  Citizen  │       │ Government │      │ University │
-       └─────┬─────┘       └──────┬─────┘      └──────┬─────┘
-             │                    │                   │
-             └────────────────────┼───────────────────┘
+                     ┌──────────────────────────┐
+                     │        JH-SANKALP        │
+                     │  Collaboration Platform  │
+                     └────────────┬─────────────┘
                                   │
-                                  ▼
-                         ┌─────────────────┐
-                         │   React / Vite  │
-                         │    Frontend     │
-                         └────────┬────────┘
-                                  │
-                              REST API
-                                  │
-                                  ▼
-                         ┌─────────────────┐
-                         │   Django + DRF  │
-                         │     Backend     │
-                         └────────┬────────┘
-                                  │
-                                  ▼
-                         ┌─────────────────┐
-                         │   PostgreSQL    │
-                         └─────────────────┘
+              ┌───────────────────┼───────────────────┐
+              │                   │                   │
+              ▼                   ▼                   ▼
+        ┌───────────┐       ┌────────────┐      ┌────────────┐
+        │  Citizen  │       │ Government │      │ University │
+        └─────┬─────┘       └──────┬─────┘      └──────┬─────┘
+              │                    │                   │
+              └────────────────────┼───────────────────┘
+                                   │
+                                   ▼
+                           ┌─────────────────┐
+                           │   React / Vite  │
+                           │    Frontend     │
+                           └────────┬────────┘
+                                    │
+                                  REST API
+                                    │
+                                    ▼
+                           ┌─────────────────┐
+                           │   Django + DRF  │
+                           │     Backend     │
+                           └────────┬────────┘
+                                    │
+                                    ▼
+                           ┌─────────────────┐
+                           │   PostgreSQL    │
+                           └─────────────────┘
 ```
 
 ---
@@ -421,7 +465,7 @@ Industry and CSR partners can participate in the ecosystem by supporting suitabl
 
 ## Frontend
 
-| **Technology**          | **Purpose**                     |
+| Technology              | Purpose                         |
 | ----------------------- | ------------------------------- |
 | ⚛️ **React.js**         | Frontend application            |
 | ⚡ **Vite**              | Development server & build tool |
@@ -433,7 +477,7 @@ Industry and CSR partners can participate in the ecosystem by supporting suitabl
 
 ## Backend
 
-| **Technology**               | **Purpose**                    |
+| Technology                   | Purpose                        |
 | ---------------------------- | ------------------------------ |
 | 🐍 **Python**                | Backend programming language   |
 | 🌐 **Django**                | Backend web framework          |
@@ -450,7 +494,7 @@ jh_sankalp/
 │
 ├── backend/                      # Django REST API Backend
 │   ├── accounts/                 # Custom User models (Citizen, Univ, CSR, Gov)
-│   ├── ai_engine/                # AI Matchmaking logic & keyword analysis
+│   ├── ai_engine/                # AI matchmaking logic & keyword analysis
 │   ├── analytics/                # Data processing for frontend charts
 │   ├── challenges/               # Core CRUD for societal issues & GIS data
 │   ├── industries/               # Industry & CSR partner management
@@ -514,13 +558,10 @@ Create a `.env` file in the root directory.
 SECRET_KEY=your_super_secret_key_here
 DEBUG=True
 
-# Database Configuration
-# Uncomment the following variables to use PostgreSQL
-# DB_NAME=jh_sankalp_db
-# DB_USER=postgres
-# DB_PASSWORD=your_password
-# DB_HOST=localhost
-# DB_PORT=5432
+# Database Configuration (Using dj-database-url)
+# We use a single DATABASE_URL string that works for both local and cloud databases.
+# Replace YOUR_DB_USER and YOUR_DB_PASSWORD with your local PostgreSQL credentials.
+DATABASE_URL=postgres://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/jh_sankalp_db
 
 # Hybrid Security Clearance Codes
 GOV_CLEARANCE_CODE=gov123
@@ -562,14 +603,6 @@ pip install -r requirements.txt
 ```bash
 python manage.py makemigrations
 python manage.py migrate
-```
-
-## Create a Superuser
-
-Create a System Admin account:
-
-```bash
-python manage.py createsuperuser
 ```
 
 ## Start the Django Server
@@ -618,8 +651,6 @@ npm run dev
 * Platform activity logs
 * Global analytics overview
 
----
-
 ## 👤 Citizen Module
 
 * User registration & authentication
@@ -627,8 +658,6 @@ npm run dev
 * GIS-based incident location
 * Issue tracking
 * Status updates
-
----
 
 ## 🏛️ Government Module
 
@@ -641,25 +670,25 @@ npm run dev
 * Analytics
 * Resolution tracking
 
----
-
 ## 🎓 University Module
 
 * Institutional profile
 * Domain expertise
 * Laboratory infrastructure
+* Domain keyword configuration
 * Challenge discovery
 * Smart challenge matching
 * Project collaboration
 
----
-
 ## 🏢 Industry / CSR Module
 
 * CSR partner profile
+* Domain keyword configuration
 * Project discovery
+* Smart project matching
 * Funding opportunities
 * Technical collaboration
+* District preferences
 * Social impact participation
 
 ---
@@ -675,9 +704,9 @@ Government Review
         ↓
 Government Track & View Details
         ↓
-Academic Smart Match
+Academic / Industry Domain Matching
         ↓
-Industry CSR Funding
+Academic Collaboration / Industry CSR Funding
         ↓
 Project Implementation & Tracking
         ↓
